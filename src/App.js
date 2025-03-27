@@ -1,19 +1,11 @@
 import React from 'react';
-import EventForm from './components/EventForm';
-import EventList from './components/EventList';
-import Calendar from './components/Calendar';
-import CategoryFilter from './components/CategoryFilter';
-import Reminder from './components/Reminder';
+import Header from './components/Header';
+import './App.css';
 
 function App() {
     return (
         <div>
-            <h1>Event calendar</h1>
-            <EventForm />
-            <CategoryFilter />
-            <Calendar />
-            <EventList />
-            <Reminder />
+            <Header />
         </div>
     );
 }

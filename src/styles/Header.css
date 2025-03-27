@@ -1,0 +1,33 @@
+.header {
+    background-color: #f0f0f0; /* Фон header, можно изменить */
+    padding: 1rem 1.25rem; /* Адаптивный отступ: 1.25rem примерно соответствует 20px */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Левая группа кнопок */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-left .btn {
+    margin-right: 1rem;
+}
+
+/* Правая группа кнопок (переключатель даты) */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-right .btn {
+    margin: 0 0.5rem;
+}
+
+/* Специфический стиль для кнопки "Date" */
+.date-btn {
+    font-weight: bold;
+    cursor: pointer;
+}
