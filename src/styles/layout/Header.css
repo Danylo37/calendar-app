@@ -14,8 +14,35 @@
     align-items: center;
 }
 
+.btn {
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
 .header-left .btn {
+    background-color: #C8CEFF;
+    color: white;
     margin-right: 1rem;
+    box-shadow: 2px 2px 0 #C7B0FF;
+    position: relative;
+    top: 0;
+    left: 0;
+    transition: all 0.1s ease-in-out;
+}
+
+.header-left .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #C7B0FF;
+}
+
+.header-left .btn:hover {
+    background-color: #b9bfff;
 }
 
 .header-right .btn {
