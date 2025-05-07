@@ -154,13 +154,18 @@
 }
 
 .dropdown-item-active {
-    background-color: #f0f0f0;
+    background-color: #F3EFFF;
     color: #8466D7;
     font-weight: 500;
 }
 
 .dropdown-item-active:hover {
+    background-color: #EAE4FF;
     color: #815ce8;
+}
+
+.dropdown-item:hover {
+    color: #8466D7;
 }
 
 .chevron-rotated {
