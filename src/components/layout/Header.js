@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    PlusCircle, Calendar, ListFilter, ChevronLeft, ChevronRight, ChevronDown, CalendarDays, CalendarRange, CalendarClock
+    PlusCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown, CalendarDays, CalendarRange, CalendarClock
 } from 'lucide-react';
 import '../../styles/layout/Header.css';
+import CategoryManager from '../CategoryManager';
 
 function Header() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -150,10 +151,7 @@ function Header() {
                         </div>
                     )}
                 </div>
-                <button className="btn">
-                    <ListFilter size={18} />
-                    <span>Categories</span>
-                </button>
+                <CategoryManager />
             </div>
             <div className="header-right">
                 <button className="btn nav-btn" onClick={goToPrevious}>
