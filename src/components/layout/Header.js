@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { PlusCircle, Calendar, ListFilter, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import {
+    PlusCircle, Calendar, ListFilter, ChevronLeft, ChevronRight, ChevronDown, CalendarDays, CalendarRange, CalendarClock
+} from 'lucide-react';
 import '../../styles/layout/Header.css';
 
 function Header() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState('Week');
     const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
+    const [dropdownAnimation, setDropdownAnimation] = useState('');
 
     const dropdownRef = useRef(null);
 
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsViewDropdownOpen(false);
+                closeDropdown();
             }
         }
 
@@ -21,6 +24,27 @@ function Header() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    const openDropdown = () => {
+        setIsViewDropdownOpen(true);
+        setDropdownAnimation('dropdown-open');
+    };
+
+    const closeDropdown = () => {
+        setDropdownAnimation('dropdown-close');
+        setTimeout(() => {
+            setIsViewDropdownOpen(false);
+            setDropdownAnimation('');
+        }, 200); // Время анимации
+    };
+
+    const toggleDropdown = () => {
+        if (isViewDropdownOpen) {
+            closeDropdown();
+        } else {
+            openDropdown();
+        }
+    };
 
     const formatDate = () => {
         const locale = 'en-GB';
@@ -65,7 +89,20 @@ function Header() {
 
     const changeViewMode = (mode) => {
         setViewMode(mode);
-        setIsViewDropdownOpen(false);
+        closeDropdown();
+    };
+
+    const getViewIcon = (mode) => {
+        switch(mode) {
+            case 'Day':
+                return <CalendarClock size={18} />;
+            case 'Week':
+                return <CalendarRange size={18} />;
+            case 'Month':
+                return <CalendarDays size={18} />;
+            default:
+                return <Calendar size={18} />;
+        }
     };
 
     return (
@@ -78,31 +115,37 @@ function Header() {
                 <div className="dropdown-container" ref={dropdownRef}>
                     <button
                         className="btn"
-                        onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
+                        onClick={toggleDropdown}
                     >
-                        <Calendar size={18} />
+                        {getViewIcon(viewMode)}
                         <span>{viewMode}</span>
-                        <ChevronDown size={16} />
+                        <ChevronDown
+                            size={16}
+                            className={isViewDropdownOpen ? 'chevron-rotated' : ''}
+                        />
                     </button>
                     {isViewDropdownOpen && (
-                        <div className="dropdown-menu">
+                        <div className={`dropdown-menu ${dropdownAnimation}`}>
                             <button
-                                className="dropdown-item"
+                                className={`dropdown-item ${viewMode === 'Day' ? 'dropdown-item-active' : ''}`}
                                 onClick={() => changeViewMode('Day')}
                             >
-                                Day
+                                <CalendarClock size={16} className="dropdown-icon" />
+                                <span>Day</span>
                             </button>
                             <button
-                                className="dropdown-item"
+                                className={`dropdown-item ${viewMode === 'Week' ? 'dropdown-item-active' : ''}`}
                                 onClick={() => changeViewMode('Week')}
                             >
-                                Week
+                                <CalendarRange size={16} className="dropdown-icon" />
+                                <span>Week</span>
                             </button>
                             <button
-                                className="dropdown-item"
+                                className={`dropdown-item ${viewMode === 'Month' ? 'dropdown-item-active' : ''}`}
                                 onClick={() => changeViewMode('Month')}
                             >
-                                Month
+                                <CalendarDays size={16} className="dropdown-icon" />
+                                <span>Month</span>
                             </button>
                         </div>
                     )}
