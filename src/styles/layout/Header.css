@@ -19,7 +19,7 @@
     border: none;
     border-radius: 1.5rem;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1rem;
     transition: transform 0.2s ease;
     position: relative;
@@ -48,11 +48,71 @@
     background-color: #b9bfff;
 }
 
-.header-right .btn {
-    margin: 0 0.5rem;
+.header-right {
+    display: flex;
+    align-items: center;
 }
 
-.date-btn {
-    font-weight: bold;
+.nav-btn {
+    background-color: transparent;
+    color: #8466D7;
+    padding: 0.5rem;
+    border: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    border-radius: 50%;
+}
+
+.nav-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.date-display {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #8466D7;
+    margin: 0 0.8rem;
+    min-width: 180px;
+    text-align: center;
+}
+
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: white;
+    border-radius: 0.8rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 10;
+    min-width: 120px;
+}
+
+.dropdown-item {
+    padding: 0.8rem 1.2rem;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: block;
+    color: #444;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.dropdown-item:active {
+    background-color: #e8e8e8;
 }
