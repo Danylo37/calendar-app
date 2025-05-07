@@ -20,7 +20,7 @@
     border-radius: 1.5rem;
     cursor: pointer;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.1rem;
     transition: transform 0.2s ease;
     position: relative;
     display: flex;
@@ -32,7 +32,7 @@
     background-color: #C8CEFF;
     color: white;
     margin-right: 1rem;
-    box-shadow: 2px 2px 0 #C7B0FF;
+    box-shadow: 3px 3px 0 #C7B0FF;
     position: relative;
     top: 0;
     left: 0;
@@ -40,7 +40,7 @@
 }
 
 .header-left .btn:active {
-    transform: translate(2px, 2px);
+    transform: translate(3px, 3px);
     box-shadow: 0 0 0 #C7B0FF;
 }
 
