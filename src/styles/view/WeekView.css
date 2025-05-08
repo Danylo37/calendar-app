@@ -113,6 +113,10 @@
     cursor: pointer;
 }
 
+.time-cell:last-child {
+    border-bottom: none;
+}
+
 .midnight-cell {
     border-top: none;
     border-bottom: 1px solid #e0e0e0;
