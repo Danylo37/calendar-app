@@ -66,6 +66,7 @@
     flex: 1;
     overflow: auto;
     height: calc(100% - 60px);
+    position: relative;
 }
 
 .time-column {
@@ -76,6 +77,7 @@
     left: 0;
     background-color: #fff;
     z-index: 99;
+    min-height: 1440px;
 }
 
 .time-slot-label {
@@ -83,7 +85,7 @@
     padding: 0 10px;
     text-align: right;
     font-size: 1rem;
-    color: #888;
+    color: #8466D7;
     position: relative;
     top: -10px;
 }
@@ -100,6 +102,7 @@
 .day-column {
     flex: 1;
     border-right: 1px solid #e0e0e0;
+    min-height: 1440px;
 }
 
 .time-cell {
