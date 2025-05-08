@@ -77,7 +77,7 @@
     left: 0;
     background-color: #fff;
     z-index: 99;
-    min-height: 1440px;
+    min-height: 1464px;
 }
 
 .time-slot-label {
@@ -102,7 +102,7 @@
 .day-column {
     flex: 1;
     border-right: 1px solid #e0e0e0;
-    min-height: 1440px;
+    min-height: 1464px;
 }
 
 .time-cell {
