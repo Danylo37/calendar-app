@@ -81,14 +81,24 @@
     min-height: 1463px;
 }
 
-.time-slot-label {
+.time-slot-container {
     height: 60px;
-    padding: 0 10px;
-    text-align: right;
+    position: relative;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.time-slot-container:last-child {
+    border-bottom: none;
+}
+
+.time-slot-label {
+    position: absolute;
+    right: 12px;
+    top: -10px;
     font-size: 1rem;
     color: #8466D7;
-    position: relative;
-    top: -10px;
+    background-color: #fff;
+    padding: 0 4px;
 }
 
 .time-slot-label.hidden {

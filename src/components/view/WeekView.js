@@ -53,9 +53,11 @@ function WeekView({ currentDate, onSelectTimeSlot }) {
                     {timeSlots.map(hour => (
                         <div
                             key={`time-${hour}`}
-                            className={`time-slot-label ${hour === 0 ? 'hidden' : ''}`}
+                            className="time-slot-container"
                         >
-                            {hour === 0 ? '' : formatHour(hour)}
+                            <div className={`time-slot-label ${hour === 0 ? 'hidden' : ''}`}>
+                                {hour === 0 ? '' : formatHour(hour)}
+                            </div>
                         </div>
                     ))}
                 </div>
