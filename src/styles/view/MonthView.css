@@ -1,0 +1,11 @@
+.month-view {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    height: 100%;
+}
+
+.month-view h3 {
+    color: #8466D7;
+    margin-bottom: 10px;
+}

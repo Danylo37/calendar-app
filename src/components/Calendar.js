@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/Calendar.css';
+import React from 'react';
+import { useCalendar } from '../context/CalendarContext';
 import DayView from './view/DayView';
 import WeekView from './view/WeekView';
 import MonthView from './view/MonthView';
+import '../styles/Calendar.css';
 
 function Calendar() {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [viewMode, setViewMode] = useState('Week');
-
-    const handleSelectTimeSlot = (day, hour) => {
-        console.log(`Selected time slot: ${day.toISOString()} at ${hour}:00`);
-    };
-
-    useEffect(() => {
-        // Code for syncing with Header will be added later
-    }, []);
+    const { currentDate, viewMode, handleSelectTimeSlot } = useCalendar();
 
     const renderCalendarView = () => {
         switch (viewMode) {

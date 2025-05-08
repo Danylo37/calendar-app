@@ -1,4 +1,5 @@
 import React from "react";
+import "../../styles/view/DayView.css";
 
 function DayView({ currentDate }) {
     return (

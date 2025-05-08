@@ -1,3 +1,5 @@
+@import '../animations.css';
+
 .header {
     height: 4vh;
     background-color: #FFF;
@@ -98,36 +100,6 @@
     overflow: hidden;
     min-width: 140px;
     transform-origin: top center;
-}
-
-.dropdown-open {
-    animation: fadeIn 0.2s ease-out forwards;
-}
-
-.dropdown-close {
-    animation: fadeOut 0.2s ease-in forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.95);
-    }
 }
 
 .dropdown-item {

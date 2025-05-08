@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
-    PlusCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown,
+    PlusCircle, ChevronLeft, ChevronRight, ChevronDown,
     CalendarDays, CalendarRange, CalendarClock
 } from 'lucide-react';
-import '../../styles/layout/Header.css';
+import { useCalendar } from '../../context/CalendarContext';
 import CategoryManager from '../CategoryManager';
+import '../../styles/layout/Header.css';
 
 function Header() {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [viewMode, setViewMode] = useState('Week');
+    const { currentDate, viewMode, setViewMode, goToPrevious, goToNext } = useCalendar();
     const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
     const [dropdownAnimation, setDropdownAnimation] = useState('');
 
@@ -65,30 +65,6 @@ function Header() {
         }
     };
 
-    const goToPrevious = () => {
-        const newDate = new Date(currentDate);
-        if (viewMode === 'Day') {
-            newDate.setDate(newDate.getDate() - 1);
-        } else if (viewMode === 'Week') {
-            newDate.setDate(newDate.getDate() - 7);
-        } else if (viewMode === 'Month') {
-            newDate.setMonth(newDate.getMonth() - 1);
-        }
-        setCurrentDate(newDate);
-    };
-
-    const goToNext = () => {
-        const newDate = new Date(currentDate);
-        if (viewMode === 'Day') {
-            newDate.setDate(newDate.getDate() + 1);
-        } else if (viewMode === 'Week') {
-            newDate.setDate(newDate.getDate() + 7);
-        } else if (viewMode === 'Month') {
-            newDate.setMonth(newDate.getMonth() + 1);
-        }
-        setCurrentDate(newDate);
-    };
-
     const changeViewMode = (mode) => {
         setViewMode(mode);
         closeDropdown();
@@ -99,7 +75,7 @@ function Header() {
             case 'Day': return <CalendarClock size={18} />;
             case 'Week': return <CalendarRange size={18} />;
             case 'Month': return <CalendarDays size={18} />;
-            default: return <Calendar size={18} />;
+            default: return <CalendarRange size={18} />;
         }
     };
 
