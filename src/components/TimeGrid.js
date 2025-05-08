@@ -13,7 +13,7 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
                     {timeSlots.map(hour => (
                         <div
                             key={`${day}-${hour}`}
-                            className="time-cell"
+                            className={`time-cell ${hour === 0 ? 'midnight-cell' : ''}`}
                             onClick={() => onSelectTimeSlot && onSelectTimeSlot(day, hour)}
                         >
                             {isToday(day) && hour === Math.floor(currentTimePosition) && (

@@ -26,6 +26,10 @@ function WeekView({ currentDate, onSelectTimeSlot }) {
         return format(new Date(), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd');
     };
 
+    const formatHour = (hour) => {
+        return hour.toString().padStart(2, '0') + ':00';
+    };
+
     return (
         <div className="week-view">
             <div className="week-header">
@@ -47,8 +51,11 @@ function WeekView({ currentDate, onSelectTimeSlot }) {
             <div className="week-grid-container">
                 <div className="time-column">
                     {timeSlots.map(hour => (
-                        <div key={`time-${hour}`} className="time-slot-label">
-                            {`${hour}:00`}
+                        <div
+                            key={`time-${hour}`}
+                            className={`time-slot-label ${hour === 0 ? 'hidden' : ''}`}
+                        >
+                            {hour === 0 ? '' : formatHour(hour)}
                         </div>
                     ))}
                 </div>
