@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    PlusCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown, CalendarDays, CalendarRange, CalendarClock
+    PlusCircle, Calendar, ChevronLeft, ChevronRight, ChevronDown,
+    CalendarDays, CalendarRange, CalendarClock
 } from 'lucide-react';
 import '../../styles/layout/Header.css';
 import CategoryManager from '../CategoryManager';
@@ -36,7 +37,7 @@ function Header() {
         setTimeout(() => {
             setIsViewDropdownOpen(false);
             setDropdownAnimation('');
-        }, 200); // Время анимации
+        }, 200);
     };
 
     const toggleDropdown = () => {
@@ -95,14 +96,10 @@ function Header() {
 
     const getViewIcon = (mode) => {
         switch(mode) {
-            case 'Day':
-                return <CalendarClock size={18} />;
-            case 'Week':
-                return <CalendarRange size={18} />;
-            case 'Month':
-                return <CalendarDays size={18} />;
-            default:
-                return <Calendar size={18} />;
+            case 'Day': return <CalendarClock size={18} />;
+            case 'Week': return <CalendarRange size={18} />;
+            case 'Month': return <CalendarDays size={18} />;
+            default: return <Calendar size={18} />;
         }
     };
 
