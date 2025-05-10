@@ -6,10 +6,6 @@
     overflow: hidden;
 }
 
-.day-view .calendar-header {
-    height: 70px;
-}
-
 .day-view .grid-container {
     margin-top: 0;
 }
