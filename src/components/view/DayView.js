@@ -1,39 +1,30 @@
 import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import TimeGrid from '../TimeGrid';
+import { useCalendarUtils } from '../../hooks/useCalendarUtils';
 import "../../styles/view/DayView.css";
 
 function DayView({ currentDate, onSelectTimeSlot }) {
+    const {
+        timeSlots,
+        currentHour,
+        currentMinute,
+        isToday,
+        formatHour
+    } = useCalendarUtils();
+
     const dayArray = useMemo(() => [currentDate], [currentDate]);
 
-    const timeSlots = useMemo(() => {
-        const slots = [];
-        for (let hour = 0; hour < 24; hour++) {
-            slots.push(hour);
-        }
-        return slots;
-    }, []);
-
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-
-    const isToday = (day) => {
-        return format(new Date(), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd');
-    };
-
-    const formatHour = (hour) => {
-        return hour.toString().padStart(2, '0') + ':00';
-    };
+    const isTodayDate = isToday(currentDate);
 
     return (
         <div className="day-view">
-            <div className="day-header">
+            <div className="calendar-header">
                 <div className="time-column-header"></div>
 
-                <div className="day-header-content">
+                <div className="header-content">
                     <div
-                        className={`day-header-item ${isToday(currentDate) ? 'today' : ''}`}
+                        className={`header-item ${isTodayDate ? 'today' : ''}`}
                     >
                         <div className="day-name">{format(currentDate, 'EEEE')}</div>
                         <div className="day-number">{format(currentDate, 'd')}</div>
@@ -41,7 +32,7 @@ function DayView({ currentDate, onSelectTimeSlot }) {
                 </div>
             </div>
 
-            <div className="day-grid-container">
+            <div className="grid-container">
                 <div className="time-column">
                     {timeSlots.map(hour => (
                         <div
@@ -61,7 +52,7 @@ function DayView({ currentDate, onSelectTimeSlot }) {
                     isToday={isToday}
                     currentHour={currentHour}
                     currentMinute={currentMinute}
-                    onSelectTimeSlot={onSelectTimeSlot}
+                    onSelectTimeSlot={onSelectTimeSlot || (() => {})}
                 />
             </div>
         </div>

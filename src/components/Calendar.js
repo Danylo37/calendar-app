@@ -11,19 +11,28 @@ function Calendar() {
     const renderCalendarView = () => {
         switch (viewMode) {
             case 'Day':
-                return <DayView currentDate={currentDate} />;
+                return (
+                    <DayView
+                        currentDate={currentDate}
+                        onSelectTimeSlot={handleSelectTimeSlot}
+                    />
+                );
             case 'Week':
-                return <WeekView
-                    currentDate={currentDate}
-                    onSelectTimeSlot={handleSelectTimeSlot}
-                />;
+                return (
+                    <WeekView
+                        currentDate={currentDate}
+                        onSelectTimeSlot={handleSelectTimeSlot}
+                    />
+                );
             case 'Month':
                 return <MonthView currentDate={currentDate} />;
             default:
-                return <WeekView
-                    currentDate={currentDate}
-                    onSelectTimeSlot={handleSelectTimeSlot}
-                />;
+                return (
+                    <WeekView
+                        currentDate={currentDate}
+                        onSelectTimeSlot={handleSelectTimeSlot}
+                    />
+                );
         }
     };
 
