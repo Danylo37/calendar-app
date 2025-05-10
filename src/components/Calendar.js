@@ -25,7 +25,11 @@ function Calendar() {
                     />
                 );
             case 'Month':
-                return <MonthView currentDate={currentDate} />;
+                return (
+                    <MonthView
+                        currentDate={currentDate}
+                    />
+                );
             default:
                 return (
                     <WeekView

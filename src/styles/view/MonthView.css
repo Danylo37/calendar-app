@@ -1,11 +1,118 @@
 .month-view {
-    padding: 20px;
-    text-align: center;
-    color: #666;
     height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.month-view h3 {
+.month-header {
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.weekdays-header {
+    margin-bottom: 15px;
+    display: flex;
+}
+
+.weekday {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-weight: 600;
     color: #8466D7;
-    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.month-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.week-row {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    min-height: 110px;
+    flex: 1;
+}
+
+.week-row:last-child {
+    border-bottom: none;
+}
+
+.month-day {
+    flex: 1;
+    min-width: 0;
+    border-right: 1px solid #e0e0e0;
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease;
+}
+
+.month-day:last-child {
+    border-right: none;
+}
+
+.month-day:hover {
+    background-color: #f8f8f8;
+}
+
+.month-day.other-month {
+    background-color: #f9f9f9;
+    color: #aaa;
+}
+
+.month-day.other-month:hover {
+    background-color: #f5f5f5;
+}
+
+.month-day.today {
+    background-color: #F3EFFF;
+}
+
+.month-day.today:hover {
+    background-color: #EAE4FF;
+}
+
+.month-day .day-number {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+.month-day.other-month .day-number {
+    color: #aaa;
+}
+
+.month-day.today .day-number {
+    font-weight: 600;
+    color: #8466D7;
+}
+
+.day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.event {
+    font-size: 0.8rem;
+    background-color: #C8CEFF;
+    color: #444;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
