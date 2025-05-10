@@ -1,11 +1,159 @@
 .day-view {
-    padding: 20px;
-    text-align: center;
-    color: #666;
     height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
-.day-view h3 {
+.day-view .day-header {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fff;
+    position: sticky;
+    padding: 0;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.day-view .time-column-header {
+    width: 60px;
+    min-width: 60px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 101;
+}
+
+.day-view .day-header-content {
+    display: flex;
+    flex: 1;
+}
+
+.day-view .day-header-item {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+}
+
+.day-view .day-name {
+    font-size: 1.25rem;
     color: #8466D7;
-    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 5px;
+}
+
+.day-view .day-number {
+    font-size: 1.25rem;
+    color: #8466D7;
+    margin-top: 4px;
+}
+
+.day-view .today {
+    background-color: #F3EFFF;
+}
+
+.day-view .today .day-name,
+.day-view .today .day-number {
+    font-weight: 600;
+}
+
+.day-view .day-grid-container {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+    height: calc(100% - 60px);
+    position: relative;
+}
+
+.day-view .time-column {
+    width: 60px;
+    min-width: 60px;
+    border-right: 1px solid #e0e0e0;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    z-index: 99;
+    min-height: 1463px;
+}
+
+.day-view .time-slot-container {
+    height: 60px;
+    position: relative;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.day-view .time-slot-container:last-child {
+    border-bottom: none;
+}
+
+.day-view .time-slot-label {
+    position: absolute;
+    right: 12px;
+    top: -10px;
+    font-size: 1rem;
+    color: #8466D7;
+    background-color: #fff;
+    padding: 0 4px;
+}
+
+.day-view .time-slot-label.hidden {
+    color: transparent;
+}
+
+.day-view .time-grid {
+    display: flex;
+    flex: 1;
+}
+
+.day-view .day-column {
+    flex: 1;
+    border-right: 1px solid #e0e0e0;
+    min-height: 1463px;
+}
+
+.day-view .time-cell {
+    height: 60px;
+    min-height: 60px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    cursor: pointer;
+}
+
+.day-view .time-cell:last-child {
+    border-bottom: none;
+}
+
+.day-view .midnight-cell {
+    border-top: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.day-view .time-cell:hover {
+    background-color: #f8f8f8;
+}
+
+.day-view .today-column .time-cell:hover {
+    background-color: #F8F6FF;
+}
+
+.day-view .current-time-indicator {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #8466D7;
+    z-index: 2;
+}
+
+.day-view .current-time-indicator::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    background-color: #8466D7;
+    border-radius: 50%;
 }
