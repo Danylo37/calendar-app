@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { format } from 'date-fns';
 
 export const useCalendarUtils = () => {
@@ -15,13 +15,13 @@ export const useCalendarUtils = () => {
     const currentMinute = now.getMinutes();
     const currentTimePosition = currentHour + (currentMinute / 60);
 
-    const isToday = (day) => {
+    const isToday = useCallback((day) => {
         return format(new Date(), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd');
-    };
+    }, []);
 
-    const formatHour = (hour) => {
+    const formatHour = useCallback((hour) => {
         return hour.toString().padStart(2, '0') + ':00';
-    };
+    }, []);
 
     return {
         timeSlots,
