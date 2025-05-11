@@ -1,10 +1,21 @@
 import React, { createContext, useState, useContext } from 'react';
 
-const CalendarContext = createContext();
+const CalendarContext = createContext(null);
 
 export const CalendarProvider = ({ children }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState('Week');
+
+    const [isEventFormOpen, setIsEventFormOpen] = useState(false);
+    const [eventButtonPosition, setEventButtonPosition] = useState(null);
+    const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
+    const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+
+    const closeAllUIElementsExcept = (elementToKeepOpen) => {
+        if (elementToKeepOpen !== 'eventForm') setIsEventFormOpen(false);
+        if (elementToKeepOpen !== 'viewDropdown') setIsViewDropdownOpen(false);
+        if (elementToKeepOpen !== 'categoryMenu') setIsCategoryMenuOpen(false);
+    };
 
     const goToPrevious = () => {
         const newDate = new Date(currentDate);
@@ -34,6 +45,33 @@ export const CalendarProvider = ({ children }) => {
         // Will be implemented later to manage the events
     };
 
+    const toggleEventForm = (buttonPosition = null) => {
+        if (!isEventFormOpen && buttonPosition) {
+            setEventButtonPosition(buttonPosition);
+        }
+        const newState = !isEventFormOpen;
+        if (newState) {
+            closeAllUIElementsExcept('eventForm');
+        }
+        setIsEventFormOpen(newState);
+    };
+
+    const toggleViewDropdown = () => {
+        const newState = !isViewDropdownOpen;
+        if (newState) {
+            closeAllUIElementsExcept('viewDropdown');
+        }
+        setIsViewDropdownOpen(newState);
+    };
+
+    const toggleCategoryMenu = () => {
+        const newState = !isCategoryMenuOpen;
+        if (newState) {
+            closeAllUIElementsExcept('categoryMenu');
+        }
+        setIsCategoryMenuOpen(newState);
+    };
+
     return (
         <CalendarContext.Provider value={{
             currentDate,
@@ -42,7 +80,17 @@ export const CalendarProvider = ({ children }) => {
             setViewMode,
             goToPrevious,
             goToNext,
-            handleSelectTimeSlot
+            handleSelectTimeSlot,
+
+            isEventFormOpen,
+            eventButtonPosition,
+            isViewDropdownOpen,
+            isCategoryMenuOpen,
+
+            toggleEventForm,
+            toggleViewDropdown,
+            toggleCategoryMenu,
+            closeAllUIElementsExcept
         }}>
             {children}
         </CalendarContext.Provider>

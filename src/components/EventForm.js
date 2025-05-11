@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/EventForm.css';
 import { ChevronDown } from 'lucide-react';
+import { useCalendar } from '../context/CalendarContext';
 
 const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    const { closeAllUIElementsExcept } = useCalendar() || { closeAllUIElementsExcept: () => {} };
 
     useEffect(() => {
         if (isOpen && formRef.current && triggerPosition) {
@@ -52,8 +55,10 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
 
             e.preventDefault();
             e.stopPropagation();
+
+            closeAllUIElementsExcept('eventForm');
         }
-    }, []);
+    }, [closeAllUIElementsExcept]);
 
     const handleMouseMove = useCallback((e) => {
         if (isDragging && formRef.current) {

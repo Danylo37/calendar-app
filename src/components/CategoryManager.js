@@ -18,6 +18,7 @@ import {
     ShoppingBag,
     GraduationCap
 } from 'lucide-react';
+import { useCalendar } from '../context/CalendarContext';
 import '../styles/CategoryManager.css';
 
 function CategoryManager() {
@@ -27,11 +28,14 @@ function CategoryManager() {
         { id: 3, name: 'Personal', icon: 'Heart', selected: true }
     ]);
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [menuAnimation, setMenuAnimation] = useState('');
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
+
+    const {
+        isCategoryMenuOpen,
+        toggleCategoryMenu
+    } = useCalendar();
 
     const menuRef = useRef(null);
 
@@ -55,7 +59,9 @@ function CategoryManager() {
     useEffect(() => {
         function handleClickOutside(event) {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
-                closeMenu();
+                if (isCategoryMenuOpen) {
+                    toggleCategoryMenu();
+                }
             }
         }
 
@@ -63,31 +69,7 @@ function CategoryManager() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
-
-    const openMenu = () => {
-        setIsMenuOpen(true);
-        setMenuAnimation('dropdown-open');
-    };
-
-    const closeMenu = () => {
-        setMenuAnimation('dropdown-close');
-        setTimeout(() => {
-            setIsMenuOpen(false);
-            setMenuAnimation('');
-            setIsAddingCategory(false);
-            setNewCategoryName('');
-            setSelectedIcon('Briefcase');
-        }, 200);
-    };
-
-    const toggleMenu = () => {
-        if (isMenuOpen) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    };
+    }, [isCategoryMenuOpen, toggleCategoryMenu]);
 
     const handleAddCategory = () => {
         if (newCategoryName.trim()) {
@@ -147,18 +129,18 @@ function CategoryManager() {
         <div className="dropdown-container" ref={menuRef}>
             <button
                 className="btn"
-                onClick={toggleMenu}
+                onClick={() => toggleCategoryMenu()}
             >
                 <ListFilter size={18} />
                 <span>{getSelectedCategoryText()}</span>
                 <ChevronDown
                     size={16}
-                    className={isMenuOpen ? 'chevron-rotated' : ''}
+                    className={isCategoryMenuOpen ? 'chevron-rotated' : ''}
                 />
             </button>
 
-            {isMenuOpen && (
-                <div className={`category-menu ${menuAnimation}`}>
+            {isCategoryMenuOpen && (
+                <div className={`category-menu ${isCategoryMenuOpen ? 'dropdown-open' : 'dropdown-close'}`}>
                     <div className="category-list">
                         {categories.map(category => (
                             <div

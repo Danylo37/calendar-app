@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
     PlusCircle, ChevronLeft, ChevronRight, ChevronDown,
     CalendarDays, CalendarRange, CalendarClock
@@ -9,11 +9,18 @@ import EventForm from '../EventForm';
 import '../../styles/layout/Header.css';
 
 function Header() {
-    const { currentDate, viewMode, setViewMode, goToPrevious, goToNext } = useCalendar();
-    const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
-    const [dropdownAnimation, setDropdownAnimation] = useState('');
-    const [isEventFormOpen, setIsEventFormOpen] = useState(false);
-    const [eventButtonPosition, setEventButtonPosition] = useState(null);
+    const {
+        currentDate,
+        viewMode,
+        setViewMode,
+        goToPrevious,
+        goToNext,
+        isEventFormOpen,
+        eventButtonPosition,
+        isViewDropdownOpen,
+        toggleEventForm,
+        toggleViewDropdown
+    } = useCalendar();
 
     const dropdownRef = useRef(null);
     const addEventButtonRef = useRef(null);
@@ -21,7 +28,9 @@ function Header() {
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                closeDropdown();
+                if (isViewDropdownOpen) {
+                    toggleViewDropdown();
+                }
             }
         }
 
@@ -29,28 +38,7 @@ function Header() {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
-
-    const openDropdown = () => {
-        setIsViewDropdownOpen(true);
-        setDropdownAnimation('dropdown-open');
-    };
-
-    const closeDropdown = () => {
-        setDropdownAnimation('dropdown-close');
-        setTimeout(() => {
-            setIsViewDropdownOpen(false);
-            setDropdownAnimation('');
-        }, 200);
-    };
-
-    const toggleDropdown = () => {
-        if (isViewDropdownOpen) {
-            closeDropdown();
-        } else {
-            openDropdown();
-        }
-    };
+    }, [isViewDropdownOpen, toggleViewDropdown]);
 
     const formatDate = () => {
         const locale = 'en-GB';
@@ -71,7 +59,7 @@ function Header() {
 
     const changeViewMode = (mode) => {
         setViewMode(mode);
-        closeDropdown();
+        toggleViewDropdown();
     };
 
     const getViewIcon = (mode) => {
@@ -88,14 +76,13 @@ function Header() {
 
         if (addEventButtonRef.current) {
             const rect = addEventButtonRef.current.getBoundingClientRect();
-            setEventButtonPosition({
+            toggleEventForm({
                 top: rect.top,
                 left: rect.left,
                 width: rect.width,
                 height: rect.height
             });
         }
-        setIsEventFormOpen(true);
     };
 
     return (
@@ -113,7 +100,7 @@ function Header() {
                     <div className="dropdown-container" ref={dropdownRef}>
                         <button
                             className="btn"
-                            onClick={toggleDropdown}
+                            onClick={() => toggleViewDropdown()}
                         >
                             {getViewIcon(viewMode)}
                             <span>{viewMode}</span>
@@ -123,7 +110,7 @@ function Header() {
                             />
                         </button>
                         {isViewDropdownOpen && (
-                            <div className={`dropdown-menu ${dropdownAnimation}`}>
+                            <div className={`dropdown-menu ${isViewDropdownOpen ? 'dropdown-open' : 'dropdown-close'}`}>
                                 <button
                                     className={`dropdown-item ${viewMode === 'Day' ? 'dropdown-item-active' : ''}`}
                                     onClick={() => changeViewMode('Day')}
@@ -151,11 +138,11 @@ function Header() {
                     <CategoryManager />
                 </div>
                 <div className="header-right">
-                    <button className="btn nav-btn" onClick={goToPrevious}>
+                    <button className="btn nav-btn" onClick={() => goToPrevious()}>
                         <ChevronLeft size={22} />
                     </button>
                     <div className="date-display">{formatDate()}</div>
-                    <button className="btn nav-btn" onClick={goToNext}>
+                    <button className="btn nav-btn" onClick={() => goToNext()}>
                         <ChevronRight size={22} />
                     </button>
                 </div>
@@ -163,7 +150,7 @@ function Header() {
 
             <EventForm
                 isOpen={isEventFormOpen}
-                onClose={() => setIsEventFormOpen(false)}
+                onClose={() => toggleEventForm()}
                 triggerPosition={eventButtonPosition}
             />
         </>
