@@ -1,6 +1,6 @@
 .event-form {
     position: fixed;
-    width: 320px;
+    width: 350px;
     max-width: 95vw;
     background-color: rgba(219, 223, 255, 0.75);
     border-radius: 30px;
@@ -34,16 +34,40 @@
     cursor: grab;
     position: relative;
     user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .form-header:active {
     cursor: grabbing;
 }
 
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    background: transparent;
+    border: none;
+    color: #6540CE;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #ff5c5c;
+}
+
 .drag-handle-container {
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .drag-handle {
@@ -81,10 +105,11 @@
 .date-time-row {
     flex-wrap: nowrap;
     justify-content: space-between;
+    gap: 4px;
 }
 
 .event-form-input {
-    padding: 10px 12px;
+    padding: 10px 8px;
     border: none;
     border-radius: 20px;
     font-size: 0.9rem;
@@ -98,14 +123,46 @@
     box-shadow: 0 0 0 2px #6540CE;
 }
 
+.event-form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #6540CE;
+}
+
+.date-input-container {
+    position: relative;
+    width: 48%;
+    min-width: 110px;
+    display: flex;
+    align-items: center;
+}
+
 .date-input {
-    width: 42%;
-    min-width: 0;
+    width: 100%;
+    padding-right: 24px;
+    text-align: left;
+}
+
+.calendar-icon-button {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: #8466D7;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    transition: color 0.2s;
+}
+
+.calendar-icon-button:hover {
+    color: #6540CE;
 }
 
 .time-input {
     width: 23%;
-    min-width: 0;
+    min-width: 60px;
 }
 
 .time-separator {
@@ -113,6 +170,7 @@
     color: #5A5A5A;
     margin: 0;
     flex-shrink: 1;
+    padding: 0 2px;
 }
 
 .category-input {
@@ -164,4 +222,30 @@
 .description-input:focus {
     outline: none;
     box-shadow: 0 0 0 2px #6540CE;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.add-button {
+    background-color: #8466D7;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.add-button:hover {
+    background-color: #7355C6;
+}
+
+.add-button:active {
+    background-color: #6540CE;
 }

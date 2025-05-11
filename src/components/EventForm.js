@@ -1,15 +1,51 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/EventForm.css';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X, Calendar } from 'lucide-react';
 import { useCalendar } from '../context/CalendarContext';
+import { format } from 'date-fns';
+import DatePicker from './DatePicker';
 
 const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+    const dateInputRef = useRef(null);
 
     const { closeAllUIElementsExcept } = useCalendar() || { closeAllUIElementsExcept: () => {} };
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setDateInputValue(format(date, 'dd/MM/yyyy'));
+    };
+
+    const handleDateInputChange = (e) => {
+        const value = e.target.value;
+        setDateInputValue(value);
+
+        const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        const match = value.match(dateRegex);
+
+        if (match) {
+            const day = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10) - 1;
+            const year = parseInt(match[3], 10);
+
+            // Проверка на валидность даты
+            const newDate = new Date(year, month, day);
+            if (
+                newDate.getDate() === day &&
+                newDate.getMonth() === month &&
+                newDate.getFullYear() === year &&
+                year >= 1900 && year <= 2100
+            ) {
+                setSelectedDate(newDate);
+            }
+        }
+    };
 
     useEffect(() => {
         if (isOpen && formRef.current && triggerPosition) {
@@ -103,6 +139,9 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                 <div className="drag-handle-container">
                     <div className="drag-handle"></div>
                 </div>
+                <button className="close-btn" onClick={onClose}>
+                    <X size={26} />
+                </button>
             </div>
 
             <input
@@ -112,11 +151,29 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             />
 
             <div className="event-form-row date-time-row">
-                <input
-                    type="text"
-                    className="event-form-input date-input"
-                    placeholder="DD/MM/YYYY"
-                />
+                <div className="date-input-container">
+                    <input
+                        type="text"
+                        className="event-form-input date-input"
+                        placeholder="DD/MM/YYYY"
+                        value={dateInputValue}
+                        onChange={handleDateInputChange}
+                        onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                        ref={dateInputRef}
+                    />
+                    <button
+                        className="calendar-icon-button"
+                        onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                    >
+                        <Calendar size={16} />
+                    </button>
+                    <DatePicker
+                        selectedDate={selectedDate}
+                        onDateChange={handleDateChange}
+                        isOpen={isDatePickerOpen}
+                        onClose={() => setIsDatePickerOpen(false)}
+                    />
+                </div>
                 <input
                     type="text"
                     className="event-form-input time-input"
@@ -150,6 +207,12 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                     className="description-input"
                     placeholder="Description"
                 ></textarea>
+            </div>
+
+            <div className="form-actions">
+                <button className="add-button" onClick={onClose}>
+                    Add event
+                </button>
             </div>
         </div>
     );

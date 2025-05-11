@@ -1,0 +1,116 @@
+.datepicker-container {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 280px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1002;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.datepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: #F3EFFF;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.datepicker-month-nav {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #8466D7;
+    transition: background-color 0.2s;
+}
+
+.datepicker-month-nav:hover {
+    background-color: rgba(132, 102, 215, 0.1);
+}
+
+.datepicker-current-month {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #8466D7;
+}
+
+.datepicker-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin: 0 10px;
+}
+
+.datepicker-weekday {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #8466D7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.datepicker-days-grid {
+    padding: 10px;
+}
+
+.datepicker-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 0;
+}
+
+.datepicker-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    width: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.datepicker-day:hover {
+    background-color: #F3EFFF;
+}
+
+.datepicker-other-month {
+    color: #ccc;
+}
+
+.datepicker-selected-day {
+    background-color: #8466D7;
+    color: white;
+    font-weight: 500;
+}
+
+.datepicker-selected-day:hover {
+    background-color: #7355C6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
