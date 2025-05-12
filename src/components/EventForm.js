@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/EventForm.css';
-import { ChevronDown, X, Calendar } from 'lucide-react';
+import { ChevronDown, X, Calendar, Clock } from 'lucide-react';
 import { useCalendar } from '../context/CalendarContext';
 import { format } from 'date-fns';
 import DatePicker from './DatePicker';
+import TimePicker from './TimePicker';
 
 const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
@@ -13,7 +14,16 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+    // Time picker states
+    const [startTimeValue, setStartTimeValue] = useState('09:00');
+    const [endTimeValue, setEndTimeValue] = useState('10:00');
+    const [isStartTimePickerOpen, setIsStartTimePickerOpen] = useState(false);
+    const [isEndTimePickerOpen, setIsEndTimePickerOpen] = useState(false);
+
     const dateInputRef = useRef(null);
+    const startTimeInputRef = useRef(null);
+    const endTimeInputRef = useRef(null);
 
     const { closeAllUIElementsExcept } = useCalendar() || { closeAllUIElementsExcept: () => {} };
 
@@ -34,7 +44,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             const month = parseInt(match[2], 10) - 1;
             const year = parseInt(match[3], 10);
 
-            // Проверка на валидность даты
+            // Check if the date is valid
             const newDate = new Date(year, month, day);
             if (
                 newDate.getDate() === day &&
@@ -45,6 +55,32 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                 setSelectedDate(newDate);
             }
         }
+    };
+
+    // Handle time input change
+    const handleTimeInputChange = (e, setTimeValue) => {
+        const value = e.target.value;
+        setTimeValue(value);
+
+        // Optional: Add validation for time format
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
+        if (timeRegex.test(value)) {
+            // Valid time format
+        }
+    };
+
+    const handleStartTimeChange = (time) => {
+        setStartTimeValue(time);
+    };
+
+    const handleEndTimeChange = (time) => {
+        setEndTimeValue(time);
+    };
+
+    const closeAllPickers = () => {
+        setIsDatePickerOpen(false);
+        setIsStartTimePickerOpen(false);
+        setIsEndTimePickerOpen(false);
     };
 
     useEffect(() => {
@@ -93,6 +129,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             e.stopPropagation();
 
             closeAllUIElementsExcept('eventForm');
+            closeAllPickers();
         }
     }, [closeAllUIElementsExcept]);
 
@@ -123,6 +160,28 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [isDragging, handleMouseMove, handleMouseUp]);
+
+    // Make sure only one picker is open at a time
+    useEffect(() => {
+        if (isStartTimePickerOpen) {
+            setIsEndTimePickerOpen(false);
+            setIsDatePickerOpen(false);
+        }
+    }, [isStartTimePickerOpen]);
+
+    useEffect(() => {
+        if (isEndTimePickerOpen) {
+            setIsStartTimePickerOpen(false);
+            setIsDatePickerOpen(false);
+        }
+    }, [isEndTimePickerOpen]);
+
+    useEffect(() => {
+        if (isDatePickerOpen) {
+            setIsStartTimePickerOpen(false);
+            setIsEndTimePickerOpen(false);
+        }
+    }, [isDatePickerOpen]);
 
     if (!isOpen) return null;
 
@@ -174,17 +233,56 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                         onClose={() => setIsDatePickerOpen(false)}
                     />
                 </div>
-                <input
-                    type="text"
-                    className="event-form-input time-input"
-                    placeholder="HH:MM"
-                />
+
+                <div className="time-input-container">
+                    <input
+                        type="text"
+                        className="event-form-input time-input"
+                        placeholder="HH:MM"
+                        value={startTimeValue}
+                        onChange={(e) => handleTimeInputChange(e, setStartTimeValue)}
+                        onClick={() => setIsStartTimePickerOpen(!isStartTimePickerOpen)}
+                        ref={startTimeInputRef}
+                    />
+                    <button
+                        className="time-icon-button"
+                        onClick={() => setIsStartTimePickerOpen(!isStartTimePickerOpen)}
+                    >
+                        <Clock size={14} />
+                    </button>
+                    <TimePicker
+                        selectedTime={startTimeValue}
+                        onTimeChange={handleStartTimeChange}
+                        isOpen={isStartTimePickerOpen}
+                        onClose={() => setIsStartTimePickerOpen(false)}
+                    />
+                </div>
+
                 <span className="time-separator">—</span>
-                <input
-                    type="text"
-                    className="event-form-input time-input"
-                    placeholder="HH:MM"
-                />
+
+                <div className="time-input-container">
+                    <input
+                        type="text"
+                        className="event-form-input time-input"
+                        placeholder="HH:MM"
+                        value={endTimeValue}
+                        onChange={(e) => handleTimeInputChange(e, setEndTimeValue)}
+                        onClick={() => setIsEndTimePickerOpen(!isEndTimePickerOpen)}
+                        ref={endTimeInputRef}
+                    />
+                    <button
+                        className="time-icon-button"
+                        onClick={() => setIsEndTimePickerOpen(!isEndTimePickerOpen)}
+                    >
+                        <Clock size={14} />
+                    </button>
+                    <TimePicker
+                        selectedTime={endTimeValue}
+                        onTimeChange={handleEndTimeChange}
+                        isOpen={isEndTimePickerOpen}
+                        onClose={() => setIsEndTimePickerOpen(false)}
+                    />
+                </div>
             </div>
 
             <div className="event-form-row">

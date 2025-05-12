@@ -1,0 +1,80 @@
+.timepicker-container {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 200px;
+    max-height: 300px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 1002;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.timepicker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: #F3EFFF;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.timepicker-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #8466D7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timepicker-content {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.time-slots-container {
+    padding: 5px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+}
+
+.time-slot {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    color: #5A5A5A;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.time-slot:hover {
+    background-color: #F3EFFF;
+    color: #8466D7;
+}
+
+.time-slot-selected {
+    background-color: #8466D7;
+    color: white;
+    font-weight: 500;
+}
+
+.time-slot-selected:hover {
+    background-color: #7355C6;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

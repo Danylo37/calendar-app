@@ -142,7 +142,16 @@
     text-align: left;
 }
 
-.calendar-icon-button {
+.time-input-container {
+    position: relative;
+    width: 25%;
+    min-width: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.calendar-icon-button,
+.time-icon-button {
     position: absolute;
     right: 8px;
     background: transparent;
@@ -156,8 +165,15 @@
     transition: color 0.2s;
 }
 
-.calendar-icon-button:hover {
+.calendar-icon-button:hover,
+.time-icon-button:hover {
     color: #6540CE;
+}
+
+.time-input {
+    width: 100%;
+    padding-right: 20px;
+    text-align: left;
 }
 
 .time-input {
