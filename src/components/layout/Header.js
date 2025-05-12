@@ -74,6 +74,8 @@ function Header() {
     const handleAddEventClick = (e) => {
         e.stopPropagation();
 
+        if (isEventFormOpen) return;
+
         if (addEventButtonRef.current) {
             const rect = addEventButtonRef.current.getBoundingClientRect();
             toggleEventForm({
@@ -90,7 +92,7 @@ function Header() {
             <header className="header">
                 <div className="header-left">
                     <button
-                        className="btn"
+                        className={`btn ${isEventFormOpen ? 'disabled' : ''}`}
                         ref={addEventButtonRef}
                         onClick={handleAddEventClick}
                     >
