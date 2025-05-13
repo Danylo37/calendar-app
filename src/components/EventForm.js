@@ -6,8 +6,8 @@ import { availableIcons } from '../constants/icons';
 import { format } from 'date-fns';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
+import ReminderSelector from './ReminderSelector';
 
-// Add color options
 const colorOptions = [
     { id: 1, background: '#DBFFDC', border: '#40CE49' },
     { id: 2, background: '#8466D7', border: '#6540CE' },
@@ -15,7 +15,7 @@ const colorOptions = [
     { id: 4, background: '#FFF4DB', border: '#CEAC40' },
     { id: 5, background: '#DBF0FF', border: '#40A9CE' },
     { id: 6, background: '#F5DBFF', border: '#B740CE' },
-    { id: 7, background: '#C8CEFF', border: '#6540CE' } // Default color
+    { id: 7, background: '#C8CEFF', border: '#6540CE' }
 ];
 
 const EventForm = ({ isOpen, onClose, triggerPosition }) => {
@@ -38,9 +38,11 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
 
-    // Add state for color selection
     const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
-    const [selectedColor, setSelectedColor] = useState(colorOptions[6]); // Default to the last color
+    const [selectedColor, setSelectedColor] = useState(colorOptions[6]); // Default color
+
+    const [selectedReminder, setSelectedReminder] = useState(null);
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
     const categoryDropdownRef = useRef(null);
     const colorDropdownRef = useRef(null);
@@ -102,33 +104,47 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         setIsEndTimePickerOpen(false);
         setIsCategoryDropdownOpen(false);
         setIsColorDropdownOpen(false);
+        setActiveDropdown(null);
+    };
+
+    const handleDropdownToggle = (dropdownName) => {
+        setActiveDropdown(dropdownName);
+
+        if (dropdownName !== 'datePicker') setIsDatePickerOpen(false);
+        if (dropdownName !== 'startTimePicker') setIsStartTimePickerOpen(false);
+        if (dropdownName !== 'endTimePicker') setIsEndTimePickerOpen(false);
+        if (dropdownName !== 'category') setIsCategoryDropdownOpen(false);
+        if (dropdownName !== 'color') setIsColorDropdownOpen(false);
     };
 
     const toggleCategoryDropdown = () => {
         setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+        handleDropdownToggle(isCategoryDropdownOpen ? null : 'category');
         if (!isCategoryDropdownOpen) {
             setIsAddingCategory(false);
-            setIsColorDropdownOpen(false);
         }
     };
 
-    // Add color dropdown toggle
     const toggleColorDropdown = () => {
         setIsColorDropdownOpen(!isColorDropdownOpen);
-        if (!isColorDropdownOpen) {
-            setIsCategoryDropdownOpen(false);
-        }
+        handleDropdownToggle(isColorDropdownOpen ? null : 'color');
     };
 
     const handleSelectCategory = (category) => {
         setSelectedCategory(category);
         setIsCategoryDropdownOpen(false);
+        setActiveDropdown(null);
     };
 
-    // Add color selection handler
     const handleSelectColor = (color) => {
         setSelectedColor(color);
         setIsColorDropdownOpen(false);
+        setActiveDropdown(null);
+    };
+
+    const handleSelectReminder = (reminder) => {
+        setSelectedReminder(reminder);
+        setActiveDropdown(null);
     };
 
     const handleAddCategory = () => {
@@ -139,6 +155,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             setIsAddingCategory(false);
             setSelectedIcon('Briefcase');
             setIsCategoryDropdownOpen(false);
+            setActiveDropdown(null);
         }
     };
 
@@ -171,14 +188,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         const handleClickOutside = (event) => {
             if (isOpen && formRef.current && !formRef.current.contains(event.target)) {
                 onClose();
-            }
-
-            if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
-                setIsCategoryDropdownOpen(false);
-            }
-
-            if (colorDropdownRef.current && !colorDropdownRef.current.contains(event.target)) {
-                setIsColorDropdownOpen(false);
             }
         };
 
@@ -231,49 +240,22 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     }, [isDragging, handleMouseMove, handleMouseUp]);
 
     useEffect(() => {
+        if (isDatePickerOpen) {
+            handleDropdownToggle('datePicker');
+        }
+    }, [isDatePickerOpen]);
+
+    useEffect(() => {
         if (isStartTimePickerOpen) {
-            setIsEndTimePickerOpen(false);
-            setIsDatePickerOpen(false);
-            setIsCategoryDropdownOpen(false);
-            setIsColorDropdownOpen(false);
+            handleDropdownToggle('startTimePicker');
         }
     }, [isStartTimePickerOpen]);
 
     useEffect(() => {
         if (isEndTimePickerOpen) {
-            setIsStartTimePickerOpen(false);
-            setIsDatePickerOpen(false);
-            setIsCategoryDropdownOpen(false);
-            setIsColorDropdownOpen(false);
+            handleDropdownToggle('endTimePicker');
         }
     }, [isEndTimePickerOpen]);
-
-    useEffect(() => {
-        if (isDatePickerOpen) {
-            setIsStartTimePickerOpen(false);
-            setIsEndTimePickerOpen(false);
-            setIsCategoryDropdownOpen(false);
-            setIsColorDropdownOpen(false);
-        }
-    }, [isDatePickerOpen]);
-
-    useEffect(() => {
-        if (isCategoryDropdownOpen) {
-            setIsStartTimePickerOpen(false);
-            setIsEndTimePickerOpen(false);
-            setIsDatePickerOpen(false);
-            setIsColorDropdownOpen(false);
-        }
-    }, [isCategoryDropdownOpen]);
-
-    useEffect(() => {
-        if (isColorDropdownOpen) {
-            setIsStartTimePickerOpen(false);
-            setIsEndTimePickerOpen(false);
-            setIsDatePickerOpen(false);
-            setIsCategoryDropdownOpen(false);
-        }
-    }, [isColorDropdownOpen]);
 
     if (!isOpen) return null;
 
@@ -511,10 +493,11 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                     )}
                 </div>
 
-                <div className="event-form-input dropdown-field">
-                    <span className="dropdown-text">Reminder</span>
-                    <ChevronDown size={14} />
-                </div>
+                <ReminderSelector
+                    selectedReminder={selectedReminder}
+                    onChange={handleSelectReminder}
+                    onDropdownToggle={(isOpen) => handleDropdownToggle(isOpen ? 'reminder' : null)}
+                />
             </div>
 
             <div className="event-form-row">
