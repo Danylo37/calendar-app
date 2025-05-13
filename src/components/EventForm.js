@@ -7,6 +7,17 @@ import { format } from 'date-fns';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
 
+// Add color options
+const colorOptions = [
+    { id: 1, background: '#DBFFDC', border: '#40CE49' },
+    { id: 2, background: '#8466D7', border: '#6540CE' },
+    { id: 3, background: '#CE6640', border: '#FFDBDB' },
+    { id: 4, background: '#FFF4DB', border: '#CEAC40' },
+    { id: 5, background: '#DBF0FF', border: '#40A9CE' },
+    { id: 6, background: '#F5DBFF', border: '#B740CE' },
+    { id: 7, background: '#C8CEFF', border: '#6540CE' } // Default color
+];
+
 const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -27,7 +38,12 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
 
+    // Add state for color selection
+    const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
+    const [selectedColor, setSelectedColor] = useState(colorOptions[6]); // Default to the last color
+
     const categoryDropdownRef = useRef(null);
+    const colorDropdownRef = useRef(null);
     const dateInputRef = useRef(null);
     const startTimeInputRef = useRef(null);
     const endTimeInputRef = useRef(null);
@@ -85,18 +101,34 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         setIsStartTimePickerOpen(false);
         setIsEndTimePickerOpen(false);
         setIsCategoryDropdownOpen(false);
+        setIsColorDropdownOpen(false);
     };
 
     const toggleCategoryDropdown = () => {
         setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
         if (!isCategoryDropdownOpen) {
             setIsAddingCategory(false);
+            setIsColorDropdownOpen(false);
+        }
+    };
+
+    // Add color dropdown toggle
+    const toggleColorDropdown = () => {
+        setIsColorDropdownOpen(!isColorDropdownOpen);
+        if (!isColorDropdownOpen) {
+            setIsCategoryDropdownOpen(false);
         }
     };
 
     const handleSelectCategory = (category) => {
         setSelectedCategory(category);
         setIsCategoryDropdownOpen(false);
+    };
+
+    // Add color selection handler
+    const handleSelectColor = (color) => {
+        setSelectedColor(color);
+        setIsColorDropdownOpen(false);
     };
 
     const handleAddCategory = () => {
@@ -143,6 +175,10 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
 
             if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
                 setIsCategoryDropdownOpen(false);
+            }
+
+            if (colorDropdownRef.current && !colorDropdownRef.current.contains(event.target)) {
+                setIsColorDropdownOpen(false);
             }
         };
 
@@ -199,6 +235,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             setIsEndTimePickerOpen(false);
             setIsDatePickerOpen(false);
             setIsCategoryDropdownOpen(false);
+            setIsColorDropdownOpen(false);
         }
     }, [isStartTimePickerOpen]);
 
@@ -207,6 +244,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             setIsStartTimePickerOpen(false);
             setIsDatePickerOpen(false);
             setIsCategoryDropdownOpen(false);
+            setIsColorDropdownOpen(false);
         }
     }, [isEndTimePickerOpen]);
 
@@ -215,6 +253,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             setIsStartTimePickerOpen(false);
             setIsEndTimePickerOpen(false);
             setIsCategoryDropdownOpen(false);
+            setIsColorDropdownOpen(false);
         }
     }, [isDatePickerOpen]);
 
@@ -223,8 +262,18 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             setIsStartTimePickerOpen(false);
             setIsEndTimePickerOpen(false);
             setIsDatePickerOpen(false);
+            setIsColorDropdownOpen(false);
         }
     }, [isCategoryDropdownOpen]);
+
+    useEffect(() => {
+        if (isColorDropdownOpen) {
+            setIsStartTimePickerOpen(false);
+            setIsEndTimePickerOpen(false);
+            setIsDatePickerOpen(false);
+            setIsCategoryDropdownOpen(false);
+        }
+    }, [isColorDropdownOpen]);
 
     if (!isOpen) return null;
 
@@ -424,10 +473,44 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                     )}
                 </div>
 
-                <div className="event-form-input dropdown-field">
-                    <div className="color-indicator"></div>
-                    <ChevronDown size={14} />
+                {/* Color Picker */}
+                <div className="color-dropdown-container" ref={colorDropdownRef}>
+                    <div
+                        className="event-form-input dropdown-field color-selector"
+                        onClick={toggleColorDropdown}
+                    >
+                        <div
+                            className="color-indicator"
+                            style={{
+                                backgroundColor: selectedColor.background,
+                                borderColor: selectedColor.border
+                            }}
+                        ></div>
+                        <ChevronDown
+                            size={14}
+                            className={isColorDropdownOpen ? 'chevron-rotated' : ''}
+                        />
+                    </div>
+
+                    {isColorDropdownOpen && (
+                        <div className="color-dropdown">
+                            <div className="color-options">
+                                {colorOptions.map(color => (
+                                    <div
+                                        key={color.id}
+                                        className={`color-option ${selectedColor.id === color.id ? 'color-selected' : ''}`}
+                                        onClick={() => handleSelectColor(color)}
+                                        style={{
+                                            backgroundColor: color.background,
+                                            borderColor: color.border
+                                        }}
+                                    ></div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
+
                 <div className="event-form-input dropdown-field">
                     <span className="dropdown-text">Reminder</span>
                     <ChevronDown size={14} />
