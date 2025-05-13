@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import TimeGrid from '../TimeGrid';
-import { useCalendarUtils } from '../../hooks/useCalendarUtils';
-import "../../styles/view/DayView.css";
+import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
+import "../../../styles/view/DayView.css";
 
 function DayView({ currentDate, onSelectTimeSlot }) {
     const {

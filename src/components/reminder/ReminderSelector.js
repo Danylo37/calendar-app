@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Clock, X } from 'lucide-react';
-import '../styles/ReminderSelector.css';
+import '../../styles/ReminderSelector.css';
 
 const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
     const defaultValue = initialValue && typeof initialValue.value === 'number' ? initialValue.value : 15;

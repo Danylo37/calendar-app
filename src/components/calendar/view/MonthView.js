@@ -9,8 +9,8 @@ import {
     isSameMonth,
     addDays
 } from 'date-fns';
-import { useCalendarUtils } from '../../hooks/useCalendarUtils';
-import "../../styles/view/MonthView.css";
+import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
+import "../../../styles/view/MonthView.css";
 
 function MonthView({ currentDate }) {
     const { isToday } = useCalendarUtils();

@@ -13,7 +13,7 @@ import {
     addDays
 } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import '../styles/DatePicker.css';
+import '../../../styles/DatePicker.css';
 
 const DatePicker = ({ selectedDate, onDateChange, isOpen, onClose }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());

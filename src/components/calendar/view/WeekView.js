@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import TimeGrid from '../TimeGrid';
-import { useCalendarUtils } from '../../hooks/useCalendarUtils';
-import "../../styles/view/WeekView.css";
+import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
+import "../../../styles/view/WeekView.css";
 
 function WeekView({ currentDate, onSelectTimeSlot }) {
     const {

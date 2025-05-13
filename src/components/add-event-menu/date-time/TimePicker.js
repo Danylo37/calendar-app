@@ -1,7 +1,6 @@
 import React from 'react';
-import { format } from 'date-fns';
 import { Clock } from 'lucide-react';
-import '../styles/TimePicker.css';
+import '../../../styles/TimePicker.css';
 
 const generateTimeSlots = () => {
     const slots = [];

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ListFilter, ChevronDown, Plus, X } from 'lucide-react';
-import { useCalendar } from '../context/CalendarContext';
-import { availableIcons } from '../constants/icons';
-import '../styles/CategoryManager.css';
+import { useCalendar } from '../../context/CalendarProvider';
+import { availableIcons } from '../../constants/icons';
+import '../../styles/CategoryManager.css';
 
 function CategoryManager() {
     const [newCategoryName, setNewCategoryName] = useState('');

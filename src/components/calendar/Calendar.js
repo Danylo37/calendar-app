@@ -1,9 +1,9 @@
 import React from 'react';
-import { useCalendar } from '../context/CalendarContext';
+import { useCalendar } from '../../context/CalendarProvider';
 import DayView from './view/DayView';
 import WeekView from './view/WeekView';
 import MonthView from './view/MonthView';
-import '../styles/Calendar.css';
+import '../../styles/Calendar.css';
 
 function Calendar() {
     const { currentDate, viewMode, handleSelectTimeSlot } = useCalendar();

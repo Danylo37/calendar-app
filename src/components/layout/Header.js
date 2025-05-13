@@ -3,9 +3,9 @@ import {
     PlusCircle, ChevronLeft, ChevronRight, ChevronDown,
     CalendarDays, CalendarRange, CalendarClock
 } from 'lucide-react';
-import { useCalendar } from '../../context/CalendarContext';
-import CategoryManager from '../CategoryManager';
-import EventForm from '../EventForm';
+import { useCalendar } from '../../context/CalendarProvider';
+import CategoryManager from '../category/CategoryManager';
+import Menu from '../add-event-menu/Menu';
 import '../../styles/layout/Header.css';
 
 function Header() {
@@ -150,7 +150,7 @@ function Header() {
                 </div>
             </header>
 
-            <EventForm
+            <Menu
                 isOpen={isEventFormOpen}
                 onClose={() => toggleEventForm()}
                 triggerPosition={eventButtonPosition}
