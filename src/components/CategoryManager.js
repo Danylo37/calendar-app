@@ -22,19 +22,17 @@ import { useCalendar } from '../context/CalendarContext';
 import '../styles/CategoryManager.css';
 
 function CategoryManager() {
-    const [categories, setCategories] = useState([
-        { id: 1, name: 'Work', icon: 'Briefcase', selected: true },
-        { id: 2, name: 'Home', icon: 'Home', selected: true },
-        { id: 3, name: 'Personal', icon: 'Heart', selected: true }
-    ]);
-
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
 
     const {
         isCategoryMenuOpen,
-        toggleCategoryMenu
+        toggleCategoryMenu,
+        categories,
+        addCategory,
+        removeCategory,
+        toggleCategorySelection
     } = useCalendar();
 
     const menuRef = useRef(null);
@@ -73,14 +71,7 @@ function CategoryManager() {
 
     const handleAddCategory = () => {
         if (newCategoryName.trim()) {
-            const newCategory = {
-                id: Date.now(),
-                name: newCategoryName.trim(),
-                icon: selectedIcon,
-                selected: true
-            };
-
-            setCategories([...categories, newCategory]);
+            addCategory(newCategoryName, selectedIcon);
             setNewCategoryName('');
             setIsAddingCategory(false);
             setSelectedIcon('Briefcase');
@@ -88,15 +79,7 @@ function CategoryManager() {
     };
 
     const handleRemoveCategory = (id) => {
-        setCategories(categories.filter(category => category.id !== id));
-    };
-
-    const toggleCategorySelection = (id) => {
-        setCategories(categories.map(category =>
-            category.id === id
-                ? { ...category, selected: !category.selected }
-                : category
-        ));
+        removeCategory(id);
     };
 
     const getIconComponent = (iconName, size = 16) => {

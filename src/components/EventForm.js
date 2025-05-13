@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/EventForm.css';
-import { ChevronDown, X, Calendar, Clock } from 'lucide-react';
+import { ChevronDown, X, Calendar, Clock, Plus, Briefcase, Home, Heart, Book, Coffee, Utensils, Plane, Users, Dumbbell, Film, Music, ShoppingBag, GraduationCap } from 'lucide-react';
 import { useCalendar } from '../context/CalendarContext';
 import { format } from 'date-fns';
 import DatePicker from './DatePicker';
@@ -15,16 +15,47 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
+    // Time picker states
     const [startTimeValue, setStartTimeValue] = useState('09:00');
     const [endTimeValue, setEndTimeValue] = useState('10:00');
     const [isStartTimePickerOpen, setIsStartTimePickerOpen] = useState(false);
     const [isEndTimePickerOpen, setIsEndTimePickerOpen] = useState(false);
 
+    // Category states
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [selectedIcon, setSelectedIcon] = useState('Briefcase');
+
+    const categoryDropdownRef = useRef(null);
+
     const dateInputRef = useRef(null);
     const startTimeInputRef = useRef(null);
     const endTimeInputRef = useRef(null);
 
-    const { closeAllUIElementsExcept } = useCalendar() || { closeAllUIElementsExcept: () => {} };
+    const {
+        closeAllUIElementsExcept,
+        // Using global categories
+        categories,
+        addCategory
+    } = useCalendar();
+
+    const availableIcons = [
+        { name: 'Briefcase', component: Briefcase },
+        { name: 'Home', component: Home },
+        { name: 'Heart', component: Heart },
+        { name: 'Book', component: Book },
+        { name: 'Coffee', component: Coffee },
+        { name: 'Utensils', component: Utensils },
+        { name: 'Plane', component: Plane },
+        { name: 'Users', component: Users },
+        { name: 'Dumbbell', component: Dumbbell },
+        { name: 'Film', component: Film },
+        { name: 'Music', component: Music },
+        { name: 'ShoppingBag', component: ShoppingBag },
+        { name: 'GraduationCap', component: GraduationCap }
+    ];
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -77,6 +108,42 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         setIsDatePickerOpen(false);
         setIsStartTimePickerOpen(false);
         setIsEndTimePickerOpen(false);
+        setIsCategoryDropdownOpen(false);
+    };
+
+    // Category functions
+    const toggleCategoryDropdown = () => {
+        setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+        if (!isCategoryDropdownOpen) {
+            setIsAddingCategory(false);
+        }
+    };
+
+    const handleSelectCategory = (category) => {
+        setSelectedCategory(category);
+        setIsCategoryDropdownOpen(false);
+    };
+
+    const handleAddCategory = () => {
+        if (newCategoryName.trim()) {
+            // Use the global addCategory function
+            const newCategory = addCategory(newCategoryName, selectedIcon);
+            setSelectedCategory(newCategory);
+            setNewCategoryName('');
+            setIsAddingCategory(false);
+            setSelectedIcon('Briefcase');
+            setIsCategoryDropdownOpen(false);
+        }
+    };
+
+    const getIconComponent = (iconName, size = 16) => {
+        const icon = availableIcons
+            .find(icon => icon.name === iconName);
+        if (icon) {
+            const IconComponent = icon.component;
+            return <IconComponent size={size} />;
+        }
+        return <Briefcase size={size} />;
     };
 
     useEffect(() => {
@@ -101,6 +168,10 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         const handleClickOutside = (event) => {
             if (isOpen && formRef.current && !formRef.current.contains(event.target)) {
                 onClose();
+            }
+
+            if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+                setIsCategoryDropdownOpen(false);
             }
         };
 
@@ -157,10 +228,12 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         };
     }, [isDragging, handleMouseMove, handleMouseUp]);
 
+    // Make sure only one picker is open at a time
     useEffect(() => {
         if (isStartTimePickerOpen) {
             setIsEndTimePickerOpen(false);
             setIsDatePickerOpen(false);
+            setIsCategoryDropdownOpen(false);
         }
     }, [isStartTimePickerOpen]);
 
@@ -168,6 +241,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         if (isEndTimePickerOpen) {
             setIsStartTimePickerOpen(false);
             setIsDatePickerOpen(false);
+            setIsCategoryDropdownOpen(false);
         }
     }, [isEndTimePickerOpen]);
 
@@ -175,8 +249,17 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         if (isDatePickerOpen) {
             setIsStartTimePickerOpen(false);
             setIsEndTimePickerOpen(false);
+            setIsCategoryDropdownOpen(false);
         }
     }, [isDatePickerOpen]);
+
+    useEffect(() => {
+        if (isCategoryDropdownOpen) {
+            setIsStartTimePickerOpen(false);
+            setIsEndTimePickerOpen(false);
+            setIsDatePickerOpen(false);
+        }
+    }, [isCategoryDropdownOpen]);
 
     if (!isOpen) return null;
 
@@ -283,10 +366,101 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
             </div>
 
             <div className="event-form-row">
-                <div className="event-form-input dropdown-field">
-                    <span className="dropdown-text">Category</span>
-                    <ChevronDown size={14} />
+                <div className="category-dropdown-container" ref={categoryDropdownRef}>
+                    <div
+                        className="event-form-input dropdown-field category-selector"
+                        onClick={toggleCategoryDropdown}
+                    >
+                        {selectedCategory ? (
+                            <>
+                                <div className="selected-category">
+                                    <div className="category-icon">
+                                        {getIconComponent(selectedCategory.icon)}
+                                    </div>
+                                    <span className="dropdown-text">{selectedCategory.name}</span>
+                                </div>
+                            </>
+                        ) : (
+                            <span className="dropdown-text">Category</span>
+                        )}
+                        <ChevronDown
+                            size={14}
+                            className={isCategoryDropdownOpen ? 'chevron-rotated' : ''}
+                        />
+                    </div>
+
+                    {isCategoryDropdownOpen && (
+                        <div className="category-dropdown">
+                            <div className="category-list">
+                                {categories.map(category => (
+                                    <div
+                                        key={category.id}
+                                        className={`category-item ${selectedCategory && selectedCategory.id === category.id ? 'category-selected' : ''}`}
+                                        onClick={() => handleSelectCategory(category)}
+                                    >
+                                        <div className="category-icon">
+                                            {getIconComponent(category.icon)}
+                                        </div>
+                                        <span className="category-name">{category.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {isAddingCategory ? (
+                                <div className="add-category-form">
+                                    <input
+                                        type="text"
+                                        placeholder="Category name"
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        className="category-input"
+                                        autoFocus
+                                    />
+
+                                    <div className="icon-selector">
+                                        {availableIcons.map(icon => {
+                                            const IconComponent = icon.component;
+                                            return (
+                                                <div
+                                                    key={icon.name}
+                                                    className={`icon-option ${selectedIcon === icon.name ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedIcon(icon.name)}
+                                                >
+                                                    <IconComponent size={20} />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="form-actions category-actions">
+                                        <button
+                                            className="cancel-btn"
+                                            onClick={() => setIsAddingCategory(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="save-btn"
+                                            onClick={handleAddCategory}
+                                            disabled={!newCategoryName.trim()}
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <button
+                                    className="add-category-btn"
+                                    onClick={() => setIsAddingCategory(true)}
+                                >
+                                    <Plus size={16} />
+                                    <span>Add Category</span>
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
+
                 <div className="event-form-input dropdown-field">
                     <div className="color-indicator"></div>
                     <ChevronDown size={14} />
