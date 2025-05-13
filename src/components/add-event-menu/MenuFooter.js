@@ -1,9 +1,9 @@
 import React from 'react';
 
-const MenuFooter = ({ onClose }) => {
+const MenuFooter = ({onAddEvent}) => {
     return (
         <div className="form-actions">
-            <button className="add-button" onClick={onClose}>
+            <button className="add-button" onClick={onAddEvent}>
                 Add event
             </button>
         </div>

@@ -48,7 +48,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const {
         closeAllUIElementsExcept,
         categories,
-        addCategory
+        addCategory,
+        addEvent
     } = useCalendar();
 
     const handleDateChange = (date) => {
@@ -154,6 +155,41 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             setSelectedIcon('Briefcase');
             setIsCategoryDropdownOpen(false);
         }
+    };
+
+    const handleAddEvent = () => {
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth() + 1;
+        const day = selectedDate.getDate();
+        const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+        const eventData = {
+            title: title || 'Untitled Event',
+            date: formattedDate,
+            startTime: startTimeValue,
+            endTime: endTimeValue,
+            category: selectedCategory,
+            color: selectedColor,
+            description: description,
+            reminder: selectedReminder
+        };
+
+        addEvent(eventData);
+
+        resetForm();
+        onClose();
+    };
+
+    const resetForm = () => {
+        setTitle('');
+        setSelectedDate(new Date());
+        setDateInputValue(format(new Date(), 'dd/MM/yyyy'));
+        setStartTimeValue('09:00');
+        setEndTimeValue('10:00');
+        setSelectedCategory(null);
+        setSelectedColor(colorOptions[6]);
+        setDescription('');
+        setSelectedReminder(null);
     };
 
     const getIconComponent = (iconName, size = 16) => {
@@ -346,7 +382,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 setDescription={setDescription}
             />
 
-            <MenuFooter onClose={onClose} />
+            <MenuFooter onAddEvent={handleAddEvent}/>
         </div>
     );
 };
