@@ -9,7 +9,7 @@ import CategorySelector from './CategorySelector';
 import ColorSelector, { colorOptions } from './ColorSelector';
 import EventDescription from './EventDescription';
 import MenuFooter from './MenuFooter';
-import ReminderSelector from '../reminder/ReminderSelector';
+import ReminderSelector from './ReminderSelector';
 import { availableIcons } from '../../constants/icons';
 
 const Menu = ({ isOpen, onClose, triggerPosition }) => {
