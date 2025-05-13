@@ -1,7 +1,6 @@
 .event-form {
     position: fixed;
-    width: 350px;
-    max-width: 95vw;
+    width: 320px;
     background-color: rgba(219, 223, 255, 0.75);
     border-radius: 30px;
     padding: 20px;
@@ -20,11 +19,6 @@
     transform: scale(1);
     opacity: 1;
     pointer-events: auto;
-}
-
-.event-form.active {
-    transform: scale(1);
-    opacity: 1;
 }
 
 .form-header {
@@ -88,6 +82,7 @@
     padding: 5px 0;
     margin-bottom: 15px;
     outline: none;
+    box-sizing: border-box;
 }
 
 .event-form-title::placeholder {
@@ -96,19 +91,22 @@
 
 .event-form-row {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     margin-bottom: 12px;
     align-items: center;
-    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .date-time-row {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 4px;
+    gap: 10px;
 }
 
 .event-form-input {
+    width: 100%;
+    box-sizing: border-box;
     padding: 10px 8px;
     border: none;
     border-radius: 20px;
@@ -116,11 +114,8 @@
     background-color: white;
     color: #5A5A5A;
     text-align: center;
-}
-
-.event-form-input:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px #6540CE;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event-form-input:focus {
@@ -130,7 +125,7 @@
 
 .date-input-container {
     position: relative;
-    width: 48%;
+    flex: 2;
     min-width: 110px;
     display: flex;
     align-items: center;
@@ -142,9 +137,17 @@
     text-align: left;
 }
 
+.time-selection-group {
+    display: flex;
+    align-items: center;
+    flex: 3;
+    gap: 6px;
+    min-width: 180px;
+}
+
 .time-input-container {
     position: relative;
-    width: 25%;
+    flex: 1;
     min-width: 70px;
     display: flex;
     align-items: center;
@@ -176,21 +179,14 @@
     text-align: left;
 }
 
-.time-input {
-    width: 23%;
-    min-width: 60px;
-}
-
 .time-separator {
     font-size: 1.2rem;
     color: #5A5A5A;
-    margin: 0;
-    flex-shrink: 1;
-    padding: 0 2px;
-}
-
-.category-input {
-    flex: 1;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0 2px;
+    display: flex;
+    align-items: center;
 }
 
 .event-form-input:hover {
@@ -203,10 +199,11 @@
     justify-content: space-between;
     cursor: pointer;
     flex: 1;
-    min-width: 0;
+    min-width: 80px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-right: 10px;
 }
 
 .dropdown-text {
@@ -225,6 +222,7 @@
 
 .description-input {
     width: 100%;
+    box-sizing: border-box;
     min-height: 80px;
     padding: 12px;
     border: none;
