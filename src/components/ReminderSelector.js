@@ -148,7 +148,6 @@ const reminderOptions = [
     { id: 3, value: 15, unit: 'minutes', displayShort: '15 min.' },
     { id: 4, value: 30, unit: 'minutes', displayShort: '30 min.' },
     { id: 5, value: 1, unit: 'hour', displayShort: '1 hr.' },
-    { id: 6, value: 2, unit: 'hour', displayShort: '2 hrs.' },
     { id: 'custom', value: null, unit: null, displayShort: 'Custom', isCustomOption: true }
 ];
 
