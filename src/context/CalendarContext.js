@@ -11,7 +11,6 @@ export const CalendarProvider = ({ children }) => {
     const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
     const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
-    // Global categories management
     const [categories, setCategories] = useState([
         { id: 1, name: 'Work', icon: 'Briefcase', selected: true },
         { id: 2, name: 'Home', icon: 'Home', selected: true },
@@ -77,7 +76,7 @@ export const CalendarProvider = ({ children }) => {
     };
 
     const handleSelectTimeSlot = (day, hour) => {
-        // Will be implemented later to manage the events
+        // Will be implemented later
     };
 
     const toggleEventForm = (buttonPosition = null) => {
@@ -116,18 +115,14 @@ export const CalendarProvider = ({ children }) => {
             goToPrevious,
             goToNext,
             handleSelectTimeSlot,
-
             isEventFormOpen,
             eventButtonPosition,
             isViewDropdownOpen,
             isCategoryMenuOpen,
-
             toggleEventForm,
             toggleViewDropdown,
             toggleCategoryMenu,
             closeAllUIElementsExcept,
-
-            // Categories
             categories,
             addCategory,
             removeCategory,

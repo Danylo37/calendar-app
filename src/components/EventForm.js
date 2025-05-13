@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../styles/EventForm.css';
-import { ChevronDown, X, Calendar, Clock, Plus, Briefcase, Home, Heart, Book, Coffee, Utensils, Plane, Users, Dumbbell, Film, Music, ShoppingBag, GraduationCap } from 'lucide-react';
+import { ChevronDown, X, Calendar, Clock, Plus, Briefcase } from 'lucide-react';
 import { useCalendar } from '../context/CalendarContext';
+import { availableIcons } from '../constants/icons';
 import { format } from 'date-fns';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
@@ -15,13 +16,11 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-    // Time picker states
     const [startTimeValue, setStartTimeValue] = useState('09:00');
     const [endTimeValue, setEndTimeValue] = useState('10:00');
     const [isStartTimePickerOpen, setIsStartTimePickerOpen] = useState(false);
     const [isEndTimePickerOpen, setIsEndTimePickerOpen] = useState(false);
 
-    // Category states
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -29,33 +28,15 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
 
     const categoryDropdownRef = useRef(null);
-
     const dateInputRef = useRef(null);
     const startTimeInputRef = useRef(null);
     const endTimeInputRef = useRef(null);
 
     const {
         closeAllUIElementsExcept,
-        // Using global categories
         categories,
         addCategory
     } = useCalendar();
-
-    const availableIcons = [
-        { name: 'Briefcase', component: Briefcase },
-        { name: 'Home', component: Home },
-        { name: 'Heart', component: Heart },
-        { name: 'Book', component: Book },
-        { name: 'Coffee', component: Coffee },
-        { name: 'Utensils', component: Utensils },
-        { name: 'Plane', component: Plane },
-        { name: 'Users', component: Users },
-        { name: 'Dumbbell', component: Dumbbell },
-        { name: 'Film', component: Film },
-        { name: 'Music', component: Music },
-        { name: 'ShoppingBag', component: ShoppingBag },
-        { name: 'GraduationCap', component: GraduationCap }
-    ];
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -89,11 +70,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const handleTimeInputChange = (e, setTimeValue) => {
         const value = e.target.value;
         setTimeValue(value);
-
-        const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
-        if (timeRegex.test(value)) {
-            // Valid time format
-        }
     };
 
     const handleStartTimeChange = (time) => {
@@ -111,7 +87,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         setIsCategoryDropdownOpen(false);
     };
 
-    // Category functions
     const toggleCategoryDropdown = () => {
         setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
         if (!isCategoryDropdownOpen) {
@@ -126,7 +101,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
 
     const handleAddCategory = () => {
         if (newCategoryName.trim()) {
-            // Use the global addCategory function
             const newCategory = addCategory(newCategoryName, selectedIcon);
             setSelectedCategory(newCategory);
             setNewCategoryName('');
@@ -137,8 +111,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     };
 
     const getIconComponent = (iconName, size = 16) => {
-        const icon = availableIcons
-            .find(icon => icon.name === iconName);
+        const icon = availableIcons.find(icon => icon.name === iconName);
         if (icon) {
             const IconComponent = icon.component;
             return <IconComponent size={size} />;
@@ -150,9 +123,7 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         if (isOpen && formRef.current && triggerPosition) {
             const xPos = triggerPosition.left;
             const yPos = triggerPosition.top + triggerPosition.height + 10;
-
             setPosition({ x: xPos, y: yPos });
-
             formRef.current.style.transformOrigin = `top left`;
         }
     }, [isOpen, triggerPosition]);
@@ -176,7 +147,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -185,16 +155,13 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
     const handleMouseDown = useCallback((e) => {
         if (e.target.closest('.form-header')) {
             setIsDragging(true);
-
             const rect = formRef.current.getBoundingClientRect();
             setDragOffset({
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top
             });
-
             e.preventDefault();
             e.stopPropagation();
-
             closeAllUIElementsExcept('eventForm');
             closeAllPickers();
         }
@@ -204,7 +171,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         if (isDragging && formRef.current) {
             const newX = e.clientX - dragOffset.x;
             const newY = e.clientY - dragOffset.y;
-
             setPosition({ x: newX, y: newY });
         }
     }, [isDragging, dragOffset]);
@@ -228,7 +194,6 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
         };
     }, [isDragging, handleMouseMove, handleMouseUp]);
 
-    // Make sure only one picker is open at a time
     useEffect(() => {
         if (isStartTimePickerOpen) {
             setIsEndTimePickerOpen(false);
@@ -372,14 +337,12 @@ const EventForm = ({ isOpen, onClose, triggerPosition }) => {
                         onClick={toggleCategoryDropdown}
                     >
                         {selectedCategory ? (
-                            <>
-                                <div className="selected-category">
-                                    <div className="category-icon">
-                                        {getIconComponent(selectedCategory.icon)}
-                                    </div>
-                                    <span className="dropdown-text">{selectedCategory.name}</span>
+                            <div className="selected-category">
+                                <div className="category-icon">
+                                    {getIconComponent(selectedCategory.icon)}
                                 </div>
-                            </>
+                                <span className="dropdown-text">{selectedCategory.name}</span>
+                            </div>
                         ) : (
                             <span className="dropdown-text">Category</span>
                         )}

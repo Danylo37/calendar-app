@@ -1,24 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-    ListFilter,
-    ChevronDown,
-    Plus,
-    X,
-    Briefcase,
-    Home,
-    Heart,
-    Book,
-    Coffee,
-    Utensils,
-    Plane,
-    Users,
-    Dumbbell,
-    Film,
-    Music,
-    ShoppingBag,
-    GraduationCap
-} from 'lucide-react';
+import { ListFilter, ChevronDown, Plus, X } from 'lucide-react';
 import { useCalendar } from '../context/CalendarContext';
+import { availableIcons } from '../constants/icons';
 import '../styles/CategoryManager.css';
 
 function CategoryManager() {
@@ -36,23 +19,6 @@ function CategoryManager() {
     } = useCalendar();
 
     const menuRef = useRef(null);
-
-    const availableIcons = [
-        { name: 'Briefcase', component: Briefcase },
-        { name: 'Home', component: Home },
-        { name: 'Heart', component: Heart },
-        { name: 'Book', component: Book },
-        { name: 'Coffee', component: Coffee },
-        { name: 'Utensils', component: Utensils },
-        { name: 'Plane', component: Plane },
-        { name: 'Users', component: Users },
-        { name: 'Dumbbell', component: Dumbbell },
-        { name: 'Film', component: Film },
-        { name: 'Music', component: Music },
-        { name: 'ShoppingBag', component: ShoppingBag },
-        { name: 'GraduationCap', component: GraduationCap },
-        { name: 'ListFilter', component: ListFilter }
-    ];
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -83,8 +49,7 @@ function CategoryManager() {
     };
 
     const getIconComponent = (iconName, size = 16) => {
-        const icon = availableIcons
-            .find(icon => icon.name === iconName);
+        const icon = availableIcons.find(icon => icon.name === iconName);
         if (icon) {
             const IconComponent = icon.component;
             return <IconComponent size={size} />;
