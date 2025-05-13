@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 
 export const useCalendarState = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState('Week');
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
     const goToPrevious = () => {
         const newDate = new Date(currentDate);
@@ -29,7 +31,22 @@ export const useCalendarState = () => {
     };
 
     const handleSelectTimeSlot = (day, hour) => {
-        // Will be implemented later
+        const formattedDate = format(day, 'yyyy-MM-dd');
+
+        const startHour = hour < 10 ? `0${hour}` : `${hour}`;
+        const nextHour = (hour + 1) % 24;
+        const endHour = nextHour < 10 ? `0${nextHour}` : `${nextHour}`;
+
+        const startTime = `${startHour}:00`;
+        const endTime = `${endHour}:00`;
+
+        setSelectedTimeSlot({
+            date: formattedDate,
+            day: day,
+            hour: hour,
+            startTime: startTime,
+            endTime: endTime
+        });
     };
 
     return {
@@ -39,6 +56,7 @@ export const useCalendarState = () => {
         setViewMode,
         goToPrevious,
         goToNext,
-        handleSelectTimeSlot
+        handleSelectTimeSlot,
+        selectedTimeSlot
     };
 };

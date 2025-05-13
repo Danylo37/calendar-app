@@ -64,7 +64,7 @@
     display: flex;
     flex: 1;
     overflow: auto;
-    height: calc(100% - 50px);
+    height: calc(100% - 100px);
     position: relative;
 }
 
@@ -112,6 +112,7 @@
     flex: 1;
     border-right: 1px solid #e0e0e0;
     min-height: 1463px;
+    position: relative;
 }
 
 .time-cell {
@@ -120,6 +121,7 @@
     border-bottom: 1px solid #e0e0e0;
     position: relative;
     cursor: pointer;
+    overflow: visible;
 }
 
 .time-cell:last-child {

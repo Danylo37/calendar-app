@@ -17,6 +17,16 @@ export const useEvents = () => {
             reminder: eventData.reminder
         };
 
+        const startHours = parseInt(newEvent.startTime.split(':')[0], 10);
+        const startMinutes = parseInt(newEvent.startTime.split(':')[1], 10);
+        const endHours = parseInt(newEvent.endTime.split(':')[0], 10);
+        const endMinutes = parseInt(newEvent.endTime.split(':')[1], 10);
+
+        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+            const newEndHours = startHours + 1;
+            newEvent.endTime = `${newEndHours < 10 ? '0' + newEndHours : newEndHours}:${startMinutes < 10 ? '0' + startMinutes : startMinutes}`;
+        }
+
         setEvents(prevEvents => [...prevEvents, newEvent]);
         return newEvent;
     };
