@@ -73,6 +73,7 @@ const DateTimeSelector = ({
                         onTimeChange={handleStartTimeChange}
                         isOpen={isStartTimePickerOpen}
                         onClose={() => setIsStartTimePickerOpen(false)}
+                        isEndTime={false}
                     />
                 </div>
 
@@ -99,6 +100,8 @@ const DateTimeSelector = ({
                         onTimeChange={handleEndTimeChange}
                         isOpen={isEndTimePickerOpen}
                         onClose={() => setIsEndTimePickerOpen(false)}
+                        comparisonTime={startTimeValue}
+                        isEndTime={true}
                     />
                 </div>
             </div>

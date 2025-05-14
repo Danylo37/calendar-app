@@ -41,7 +41,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [eventId, setEventId] = useState(null);
 
     const [errors, setErrors] = useState({
-        title: false
+        title: false,
+        duration: false
     });
     const [showValidationErrors, setShowValidationErrors] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -216,10 +217,54 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     const handleStartTimeChange = (time) => {
         setStartTimeValue(time);
+
+        validateTimeDuration(time, endTimeValue);
     };
 
     const handleEndTimeChange = (time) => {
         setEndTimeValue(time);
+
+        if (errors.duration) {
+            setErrors({...errors, duration: false});
+        }
+    };
+
+    const calculateDurationInMinutes = (startTime, endTime) => {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+
+        const startTotalMinutes = startHours * 60 + startMinutes;
+        let endTotalMinutes = endHours * 60 + endMinutes;
+
+        if (endTotalMinutes <= startTotalMinutes) {
+            endTotalMinutes += 24 * 60;
+        }
+
+        return endTotalMinutes - startTotalMinutes;
+    };
+
+    const validateTimeDuration = (start, end) => {
+        const duration = calculateDurationInMinutes(start, end);
+
+        if (duration < 5) {
+            const [startHours, startMinutes] = start.split(':').map(Number);
+            let newEndMinutes = startMinutes + 5;
+            let newEndHours = startHours;
+
+            if (newEndMinutes >= 60) {
+                newEndHours = (newEndHours + 1) % 24;
+                newEndMinutes = newEndMinutes % 60;
+            }
+
+            const formattedEndHours = newEndHours.toString().padStart(2, '0');
+            const formattedEndMinutes = newEndMinutes.toString().padStart(2, '0');
+            const newEndTime = `${formattedEndHours}:${formattedEndMinutes}`;
+
+            setEndTimeValue(newEndTime);
+            return false;
+        }
+
+        return true;
     };
 
     const closeAllPickers = () => {
@@ -297,7 +342,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     const validateForm = () => {
         const newErrors = {
-            title: !title.trim()
+            title: !title.trim(),
+            duration: !validateTimeDuration(startTimeValue, endTimeValue)
         };
 
         setErrors(newErrors);
@@ -361,7 +407,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         setDescription('');
         setSelectedReminder(null);
         setErrors({
-            title: false
+            title: false,
+            duration: false
         });
         setShowValidationErrors(false);
         setIsEditMode(false);
@@ -512,6 +559,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 setStartTimeValue={setStartTimeValue}
                 setEndTimeValue={setEndTimeValue}
             />
+
+            {errors.duration && showValidationErrors && (
+                <div className="duration-error-message">Event must be at least 5 minutes long</div>
+            )}
 
             <div className="event-form-row">
                 <CategorySelector

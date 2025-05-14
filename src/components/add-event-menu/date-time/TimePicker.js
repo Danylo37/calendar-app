@@ -16,12 +16,22 @@ const generateTimeSlots = () => {
 
 const timeSlots = generateTimeSlots();
 
-const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose }) => {
+const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTime, isEndTime }) => {
     if (!isOpen) return null;
 
     const handleTimeSelection = (time) => {
         onTimeChange(time);
         onClose();
+    };
+
+    const isTimeEarlierOrEqual = (time, comparison) => {
+        if (!comparison || !isEndTime) return false;
+
+        const [timeHours, timeMinutes] = time.split(':').map(Number);
+        const [comparisonHours, comparisonMinutes] = comparison.split(':').map(Number);
+
+        return timeHours < comparisonHours ||
+            (timeHours === comparisonHours && timeMinutes <= comparisonMinutes);
     };
 
     return (
@@ -42,6 +52,9 @@ const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose }) => {
                             onClick={() => handleTimeSelection(time)}
                         >
                             {time}
+                            {isTimeEarlierOrEqual(time, comparisonTime) && (
+                                <span className="tomorrow-indicator"> (tomorrow)</span>
+                            )}
                         </div>
                     ))}
                 </div>
