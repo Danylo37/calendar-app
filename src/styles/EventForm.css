@@ -110,7 +110,7 @@
 .event-form-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px 8px;
+    padding: 10px;
     border: none;
     border-radius: 20px;
     font-size: 0.9rem;
@@ -145,12 +145,11 @@
     align-items: center;
     flex: 3;
     gap: 6px;
-    min-width: 180px;
 }
 
 .time-input-container {
     position: relative;
-    flex: 0.4;
+    flex: 0.5;
     display: flex;
     align-items: center;
 }
@@ -177,7 +176,6 @@
 
 .time-input {
     width: 100%;
-    padding-right: 20px;
     text-align: left;
 }
 
