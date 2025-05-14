@@ -12,11 +12,17 @@ export const CalendarProvider = ({ children }) => {
     const categoryState = useCategories();
     const eventState = useEvents();
 
+    const handleRemoveCategory = (categoryId) => {
+        eventState.updateEventsAfterCategoryDelete(categoryId);
+        categoryState.removeCategory(categoryId);
+    };
+
     const value = {
         ...calendarState,
         ...uiState,
         ...categoryState,
-        ...eventState
+        ...eventState,
+        removeCategory: handleRemoveCategory
     };
 
     return (

@@ -62,9 +62,28 @@ export const useEvents = () => {
         return updatedEvent;
     };
 
-    const getEventsForDay = (date) => {
+    const getEventsForDay = (date, categories = []) => {
         const dateString = format(date, 'yyyy-MM-dd');
-        return events.filter(event => event.date === dateString);
+        const dayEvents = events.filter(event => event.date === dateString);
+
+        if (!categories || categories.length === 0) {
+            return dayEvents;
+        }
+
+        const selectedCategoryIds = new Set(
+            categories
+                .filter(category => category.selected)
+                .map(category => category.id)
+        );
+
+        if (selectedCategoryIds.size === 0) {
+            return dayEvents.filter(event => !event.category);
+        }
+
+        return dayEvents.filter(event =>
+            !event.category ||
+            selectedCategoryIds.has(event.category.id)
+        );
     };
 
     const removeEvent = (id) => {
@@ -73,11 +92,24 @@ export const useEvents = () => {
         );
     };
 
+    const updateEventsAfterCategoryDelete = (categoryId) => {
+        setEvents(prevEvents =>
+            prevEvents.map(event => {
+                if (event.category && event.category.id === categoryId) {
+                    return { ...event, category: null };
+                }
+                return event;
+            })
+        );
+    };
+
     return {
         events,
+        setEvents,
         addEvent,
         updateEvent,
         getEventsForDay,
-        removeEvent
+        removeEvent,
+        updateEventsAfterCategoryDelete
     };
 };

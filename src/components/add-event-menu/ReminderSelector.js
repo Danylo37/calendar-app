@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronDown, Clock, X } from 'lucide-react';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import '../../styles/ReminderSelector.css';
 
 const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
@@ -8,32 +9,9 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
     const [timeUnit, setTimeUnit] = useState(initialValue?.unit || 'minutes');
     const modalRef = useRef(null);
 
-    useEffect(() => {
-        if (initialValue) {
-            if (typeof initialValue.value === 'number') {
-                setTimeValue(initialValue.value);
-            }
-            if (initialValue.unit) {
-                setTimeUnit(initialValue.unit);
-            }
-        }
-    }, [initialValue]);
+    useClickOutside(modalRef, onClose, isOpen);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (modalRef.current && !modalRef.current.contains(event.target)) {
-                onClose();
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen, onClose]);
+    if (!isOpen) return null;
 
     const handleSave = () => {
         let finalValue = Number(timeValue);
@@ -74,8 +52,6 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
             setTimeValue(value);
         }
     };
-
-    if (!isOpen) return null;
 
     return (
         <div className="custom-reminder-overlay">
@@ -156,6 +132,8 @@ const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handle
     const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
     const dropdownRef = useRef(null);
 
+    useClickOutside(dropdownRef, () => setIsDropdownOpen(false), true);
+
     const toggleDropdown = () => {
         const newState = !isDropdownOpen;
         setIsDropdownOpen(newState);
@@ -183,19 +161,6 @@ const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handle
         }
         setIsCustomModalOpen(false);
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     return (
         <>

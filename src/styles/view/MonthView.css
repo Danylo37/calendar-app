@@ -107,12 +107,24 @@
 
 .event {
     font-size: 0.8rem;
-    background-color: #C8CEFF;
     color: #444;
-    padding: 2px 4px;
+    padding: 2px 4px 2px 6px;
     border-radius: 3px;
     margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.more-events {
+    font-size: 0.75rem;
+    text-align: center;
+    color: #8466D7;
+    font-weight: 500;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.more-events:hover {
+    text-decoration: underline;
 }

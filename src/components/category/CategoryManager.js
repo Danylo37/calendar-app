@@ -2,12 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ListFilter, ChevronDown, Plus, X } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
 import { availableIcons } from '../../constants/icons';
+import CategoryConfirmModal from './CategoryConfirmModal';
 import '../../styles/CategoryManager.css';
 
 function CategoryManager() {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState('Briefcase');
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [categoryEventsCount, setCategoryEventsCount] = useState(0);
 
     const {
         isCategoryMenuOpen,
@@ -15,7 +19,8 @@ function CategoryManager() {
         categories,
         addCategory,
         removeCategory,
-        toggleCategorySelection
+        toggleCategorySelection,
+        events
     } = useCalendar();
 
     const menuRef = useRef(null);
@@ -44,8 +49,40 @@ function CategoryManager() {
         }
     };
 
-    const handleRemoveCategory = (id) => {
-        removeCategory(id);
+    const countEventsWithCategory = (categoryId) => {
+        return events.filter(event =>
+            event.category && event.category.id === categoryId
+        ).length;
+    };
+
+    const prepareRemoveCategory = (id, e) => {
+        e.stopPropagation();
+
+        const category = categories.find(cat => cat.id === id);
+        if (!category) return;
+
+        const eventsCount = countEventsWithCategory(id);
+
+        if (eventsCount === 0) {
+            removeCategory(id);
+            return;
+        }
+
+        setCategoryToDelete(category);
+        setCategoryEventsCount(eventsCount);
+
+        setConfirmModalOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (!categoryToDelete) return;
+
+        const categoryId = categoryToDelete.id;
+
+        removeCategory(categoryId);
+
+        setConfirmModalOpen(false);
+        setCategoryToDelete(null);
     };
 
     const getIconComponent = (iconName, size = 16) => {
@@ -102,10 +139,7 @@ function CategoryManager() {
                                 <span className="category-name">{category.name}</span>
                                 <button
                                     className="category-delete"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveCategory(category.id);
-                                    }}
+                                    onClick={(e) => prepareRemoveCategory(category.id, e)}
                                 >
                                     <X size={16} />
                                 </button>
@@ -166,6 +200,14 @@ function CategoryManager() {
                     )}
                 </div>
             )}
+
+            <CategoryConfirmModal
+                isOpen={confirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                categoryName={categoryToDelete?.name || ''}
+                eventCount={categoryEventsCount}
+            />
         </div>
     );
 }

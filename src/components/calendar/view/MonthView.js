@@ -10,10 +10,12 @@ import {
     addDays
 } from 'date-fns';
 import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
+import { useCalendar } from '../../../context/CalendarProvider';
 import "../../../styles/view/MonthView.css";
 
 function MonthView({ currentDate }) {
     const { isToday } = useCalendarUtils();
+    const { getEventsForDay, categories } = useCalendar();
 
     const monthDays = useMemo(() => {
         const monthStart = startOfMonth(currentDate);
@@ -42,6 +44,37 @@ function MonthView({ currentDate }) {
         return weeks;
     }, [monthDays]);
 
+    const renderDayEvents = (day) => {
+        const dayEvents = getEventsForDay(day, categories);
+
+        const MAX_VISIBLE_EVENTS = 3;
+        const visibleEvents = dayEvents.slice(0, MAX_VISIBLE_EVENTS);
+        const hasMoreEvents = dayEvents.length > MAX_VISIBLE_EVENTS;
+
+        return (
+            <>
+                {visibleEvents.map(event => (
+                    <div
+                        key={event.id}
+                        className="event"
+                        style={{
+                            backgroundColor: event.color.background,
+                            borderLeft: `3px solid ${event.color.border}`
+                        }}
+                    >
+                        {event.title}
+                    </div>
+                ))}
+
+                {hasMoreEvents && (
+                    <div className="more-events">
+                        +{dayEvents.length - MAX_VISIBLE_EVENTS} more
+                    </div>
+                )}
+            </>
+        );
+    };
+
     return (
         <div className="month-view">
             <div className="month-header">
@@ -65,6 +98,7 @@ function MonthView({ currentDate }) {
                             >
                                 <div className="day-number">{format(day, 'd')}</div>
                                 <div className="day-events">
+                                    {renderDayEvents(day)}
                                 </div>
                             </div>
                         ))}

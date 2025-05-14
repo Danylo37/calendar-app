@@ -4,7 +4,7 @@ import CalendarEvent from './CalendarEvent';
 
 function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, onSelectTimeSlot }) {
     const currentTimePosition = currentHour + (currentMinute / 60);
-    const { getEventsForDay } = useCalendar();
+    const { getEventsForDay, categories } = useCalendar();
 
     const timeToDecimal = (timeString) => {
         const [hours, minutes] = timeString.split(':').map(Number);
@@ -85,7 +85,7 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
     return (
         <div className="time-grid">
             {weekDays.map(day => {
-                const dayEvents = getEventsForDay(day);
+                const dayEvents = getEventsForDay(day, categories);
 
                 return (
                     <div
