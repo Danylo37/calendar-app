@@ -1,7 +1,6 @@
 .reminder-dropdown-container {
     position: relative;
     flex: 1;
-    min-width: 100px;
 }
 
 .reminder-selector {

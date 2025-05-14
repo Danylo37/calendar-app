@@ -1,23 +1,24 @@
 import React from 'react';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus, X } from 'lucide-react';
 import { availableIcons } from '../../constants/icons';
 
 const CategorySelector = ({
-                                   selectedCategory,
-                                   isCategoryDropdownOpen,
-                                   toggleCategoryDropdown,
-                                   categories,
-                                   handleSelectCategory,
-                                   isAddingCategory,
-                                   setIsAddingCategory,
-                                   newCategoryName,
-                                   setNewCategoryName,
-                                   selectedIcon,
-                                   setSelectedIcon,
-                                   handleAddCategory,
-                                   categoryDropdownRef,
-                                   getIconComponent
-                               }) => {
+                              selectedCategory,
+                              isCategoryDropdownOpen,
+                              toggleCategoryDropdown,
+                              categories,
+                              handleSelectCategory,
+                              isAddingCategory,
+                              setIsAddingCategory,
+                              newCategoryName,
+                              setNewCategoryName,
+                              selectedIcon,
+                              setSelectedIcon,
+                              handleAddCategory,
+                              categoryDropdownRef,
+                              getIconComponent,
+                              handleClearCategory
+                          }) => {
     return (
         <div className="category-dropdown-container" ref={categoryDropdownRef}>
             <div
@@ -30,9 +31,16 @@ const CategorySelector = ({
                             {getIconComponent(selectedCategory.icon)}
                         </div>
                         <span className="dropdown-text">{selectedCategory.name}</span>
+                        <button
+                            className="clear-selection-btn"
+                            onClick={handleClearCategory}
+                            title="Clear category"
+                        >
+                            <X size={14} />
+                        </button>
                     </div>
                 ) : (
-                    <span className="dropdown-text">Category</span>
+                    <span className="dropdown-text">Category (optional)</span>
                 )}
                 <ChevronDown
                     size={14}

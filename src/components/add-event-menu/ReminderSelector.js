@@ -3,7 +3,7 @@ import { ChevronDown, Clock, X } from 'lucide-react';
 import '../../styles/ReminderSelector.css';
 
 const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
-    const defaultValue = initialValue && typeof initialValue.value === 'number' ? initialValue.value : 15;
+    const defaultValue = initialValue && typeof initialValue.value === 'number' ? initialValue.value : 1;
     const [timeValue, setTimeValue] = useState(defaultValue);
     const [timeUnit, setTimeUnit] = useState(initialValue?.unit || 'minutes');
     const modalRef = useRef(null);
@@ -50,7 +50,7 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
                 displayShort = `${hours} ${hours === 1 ? 'hr.' : 'hrs.'}`;
             } else {
                 finalUnit = 'minutes';
-                displayShort = `${hours}h ${minutes}m`;
+                displayShort = `${hours} ${hours === 1 ? 'hr.' : 'hrs.'} ${minutes}min.`;
             }
         } else if (timeUnit === 'hour') {
             displayShort = `${finalValue} ${finalValue === 1 ? 'hr.' : 'hrs.'}`;
@@ -151,7 +151,7 @@ const reminderOptions = [
     { id: 'custom', value: null, unit: null, displayShort: 'Custom', isCustomOption: true }
 ];
 
-const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle }) => {
+const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handleClearReminder }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -205,9 +205,18 @@ const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle }) => {
                     onClick={toggleDropdown}
                 >
                     {selectedReminder ? (
-                        <span className="dropdown-text">{selectedReminder.displayShort}</span>
+                        <div className="selected-reminder">
+                            <span className="dropdown-text">{selectedReminder.displayShort}</span>
+                            <button
+                                className="clear-selection-btn"
+                                onClick={handleClearReminder}
+                                title="Clear reminder"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
                     ) : (
-                        <span className="dropdown-text">Reminder</span>
+                        <span className="dropdown-text">Reminder (optional)</span>
                     )}
                     <ChevronDown
                         size={14}

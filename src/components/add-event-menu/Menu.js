@@ -39,6 +39,11 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
 
+    const [errors, setErrors] = useState({
+        title: false
+    });
+    const [showValidationErrors, setShowValidationErrors] = useState(false);
+
     const categoryDropdownRef = useRef(null);
     const colorDropdownRef = useRef(null);
     const dateInputRef = useRef(null);
@@ -137,6 +142,11 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         setIsCategoryDropdownOpen(false);
     };
 
+    const handleClearCategory = (e) => {
+        e.stopPropagation();
+        setSelectedCategory(null);
+    };
+
     const handleSelectColor = (color) => {
         setSelectedColor(color);
         setIsColorDropdownOpen(false);
@@ -144,6 +154,11 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     const handleSelectReminder = (reminder) => {
         setSelectedReminder(reminder);
+    };
+
+    const handleClearReminder = (e) => {
+        e.stopPropagation();
+        setSelectedReminder(null);
     };
 
     const handleAddCategory = () => {
@@ -157,7 +172,24 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
     };
 
+    const validateForm = () => {
+        const newErrors = {
+            title: !title.trim()
+        };
+
+        setErrors(newErrors);
+        return !Object.values(newErrors).some(error => error);
+    };
+
     const handleAddEvent = () => {
+        // Validate form
+        const isValid = validateForm();
+
+        if (!isValid) {
+            setShowValidationErrors(true);
+            return;
+        }
+
         const year = selectedDate.getFullYear();
         const month = selectedDate.getMonth() + 1;
         const day = selectedDate.getDate();
@@ -190,6 +222,19 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         setSelectedColor(colorOptions[6]);
         setDescription('');
         setSelectedReminder(null);
+        setErrors({
+            title: false
+        });
+        setShowValidationErrors(false);
+    };
+
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        setTitle(value);
+
+        if (value.trim()) {
+            setErrors({ ...errors, title: false });
+        }
     };
 
     const getIconComponent = (iconName, size = 16) => {
@@ -309,13 +354,18 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 onMouseDown={handleMouseDown}
             />
 
-            <input
-                type="text"
-                className="event-form-title"
-                placeholder="Add title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
+            <div className="form-group">
+                <input
+                    type="text"
+                    className={`event-form-title ${errors.title && showValidationErrors ? 'input-error' : ''}`}
+                    placeholder="Add title *"
+                    value={title}
+                    onChange={handleTitleChange}
+                />
+                {errors.title && showValidationErrors && (
+                    <div className="error-message">Title is required</div>
+                )}
+            </div>
 
             <DateTimeSelector
                 dateInputValue={dateInputValue}
@@ -356,6 +406,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                     handleAddCategory={handleAddCategory}
                     categoryDropdownRef={categoryDropdownRef}
                     getIconComponent={getIconComponent}
+                    handleClearCategory={handleClearCategory}
                 />
 
                 <ColorSelector
@@ -374,6 +425,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                             closeOtherDropdowns('reminder');
                         }
                     }}
+                    handleClearReminder={handleClearReminder}
                 />
             </div>
 
