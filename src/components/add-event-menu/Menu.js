@@ -46,6 +46,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [showValidationErrors, setShowValidationErrors] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
 
+    const [formDimensions, setFormDimensions] = useState({ width: 400, height: 500 });
+
     const categoryDropdownRef = useRef(null);
     const colorDropdownRef = useRef(null);
     const dateInputRef = useRef(null);
@@ -61,6 +63,30 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         removeEvent,
         editingEvent
     } = useCalendar();
+
+    const calculatePosition = useCallback((triggerPos, formWidth, formHeight) => {
+        if (!triggerPos) return { x: 0, y: 0 };
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let xPos = triggerPos.left;
+        let yPos = triggerPos.top + triggerPos.height + 10;
+
+        if (xPos + formWidth > viewportWidth - 20) {
+            xPos = Math.max(20, viewportWidth - formWidth - 20);
+        }
+
+        if (yPos + formHeight > viewportHeight - 20) {
+            yPos = Math.max(20, triggerPos.top - formHeight - 10);
+
+            if (yPos < 20) {
+                yPos = 20;
+            }
+        }
+
+        return { x: xPos, y: yPos };
+    }, []);
 
     useEffect(() => {
         if (editingEvent && isOpen) {
@@ -99,6 +125,60 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             }
         }
     }, [editingEvent, isOpen]);
+
+    useEffect(() => {
+        if (isOpen && formRef.current && triggerPosition) {
+            const updateFormDimensions = () => {
+                if (formRef.current) {
+                    const { width, height } = formRef.current.getBoundingClientRect();
+                    setFormDimensions({ width, height });
+
+                    const pos = calculatePosition(triggerPosition, width, height);
+                    setPosition(pos);
+
+                    if (pos.y < triggerPosition.top) {
+                        formRef.current.style.transformOrigin = 'bottom left';
+                    } else {
+                        formRef.current.style.transformOrigin = 'top left';
+                    }
+                }
+            };
+
+            setTimeout(updateFormDimensions, 0);
+        }
+    }, [isOpen, triggerPosition, calculatePosition]);
+
+    useEffect(() => {
+        if (formRef.current && isOpen && triggerPosition) {
+            const pos = calculatePosition(triggerPosition, formDimensions.width, formDimensions.height);
+            setPosition(pos);
+        }
+    }, [formDimensions, triggerPosition, isOpen, calculatePosition]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleResize = () => {
+            if (formRef.current && triggerPosition) {
+                const { width, height } = formRef.current.getBoundingClientRect();
+                setFormDimensions({ width, height });
+                const pos = calculatePosition(triggerPosition, width, height);
+                setPosition(pos);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [isOpen, triggerPosition, calculatePosition]);
+
+    useEffect(() => {
+        if (formRef.current) {
+            formRef.current.style.left = `${position.x}px`;
+            formRef.current.style.top = `${position.y}px`;
+        }
+    }, [position]);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -304,22 +384,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
         return <Briefcase size={size} />;
     };
-
-    useEffect(() => {
-        if (isOpen && formRef.current && triggerPosition) {
-            const xPos = triggerPosition.left;
-            const yPos = triggerPosition.top + triggerPosition.height + 10;
-            setPosition({ x: xPos, y: yPos });
-            formRef.current.style.transformOrigin = `top left`;
-        }
-    }, [isOpen, triggerPosition]);
-
-    useEffect(() => {
-        if (formRef.current) {
-            formRef.current.style.left = `${position.x}px`;
-            formRef.current.style.top = `${position.y}px`;
-        }
-    }, [position]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
