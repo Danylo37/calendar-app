@@ -31,6 +31,37 @@ export const useEvents = () => {
         return newEvent;
     };
 
+    const updateEvent = (eventData) => {
+        if (!eventData.id) {
+            console.error('Cannot update event without ID');
+            return null;
+        }
+
+        const startHours = parseInt(eventData.startTime.split(':')[0], 10);
+        const startMinutes = parseInt(eventData.startTime.split(':')[1], 10);
+        const endHours = parseInt(eventData.endTime.split(':')[0], 10);
+        const endMinutes = parseInt(eventData.endTime.split(':')[1], 10);
+
+        let updatedEndTime = eventData.endTime;
+        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+            const newEndHours = startHours + 1;
+            updatedEndTime = `${newEndHours < 10 ? '0' + newEndHours : newEndHours}:${startMinutes < 10 ? '0' + startMinutes : startMinutes}`;
+        }
+
+        const updatedEvent = {
+            ...eventData,
+            endTime: updatedEndTime
+        };
+
+        setEvents(prevEvents =>
+            prevEvents.map(event =>
+                event.id === updatedEvent.id ? updatedEvent : event
+            )
+        );
+
+        return updatedEvent;
+    };
+
     const getEventsForDay = (date) => {
         const dateString = format(date, 'yyyy-MM-dd');
         return events.filter(event => event.date === dateString);
@@ -45,6 +76,7 @@ export const useEvents = () => {
     return {
         events,
         addEvent,
+        updateEvent,
         getEventsForDay,
         removeEvent
     };

@@ -581,3 +581,39 @@
 .clear-selection-btn:focus {
     outline: none;
 }
+
+.delete-button {
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: auto;
+}
+
+.delete-button:hover {
+    background-color: #ff3838;
+}
+
+.delete-button:active {
+    background-color: #ff2424;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.form-actions:not(:has(.delete-button)) {
+    justify-content: center;
+}

@@ -38,11 +38,13 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [selectedReminder, setSelectedReminder] = useState(null);
     const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
+    const [eventId, setEventId] = useState(null);
 
     const [errors, setErrors] = useState({
         title: false
     });
     const [showValidationErrors, setShowValidationErrors] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const categoryDropdownRef = useRef(null);
     const colorDropdownRef = useRef(null);
@@ -54,8 +56,49 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         closeAllUIElementsExcept,
         categories,
         addCategory,
-        addEvent
+        addEvent,
+        updateEvent,
+        removeEvent,
+        editingEvent
     } = useCalendar();
+
+    useEffect(() => {
+        if (editingEvent && isOpen) {
+            setIsEditMode(true);
+            setEventId(editingEvent.id);
+            setTitle(editingEvent.title || '');
+
+            try {
+                const dateParts = editingEvent.date.split('-');
+                if (dateParts.length === 3) {
+                    const year = parseInt(dateParts[0]);
+                    const month = parseInt(dateParts[1]) - 1;
+                    const day = parseInt(dateParts[2]);
+                    const eventDate = new Date(year, month, day);
+                    setSelectedDate(eventDate);
+                    setDateInputValue(format(eventDate, 'dd/MM/yyyy'));
+                }
+            } catch (error) {
+                console.error('Error parsing date:', error);
+            }
+
+            setStartTimeValue(editingEvent.startTime || '09:00');
+            setEndTimeValue(editingEvent.endTime || '10:00');
+
+            setSelectedCategory(editingEvent.category || null);
+
+            setSelectedColor(editingEvent.color || colorOptions[6]);
+
+            setDescription(editingEvent.description || '');
+
+            setSelectedReminder(editingEvent.reminder || null);
+        } else {
+            if (isOpen && !editingEvent) {
+                resetForm();
+                setIsEditMode(false);
+            }
+        }
+    }, [editingEvent, isOpen]);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -181,8 +224,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         return !Object.values(newErrors).some(error => error);
     };
 
-    const handleAddEvent = () => {
-        // Validate form
+    const handleSaveEvent = () => {
         const isValid = validateForm();
 
         if (!isValid) {
@@ -206,14 +248,30 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             reminder: selectedReminder
         };
 
-        addEvent(eventData);
+        if (isEditMode && eventId) {
+            updateEvent({
+                ...eventData,
+                id: eventId
+            });
+        } else {
+            addEvent(eventData);
+        }
 
         resetForm();
         onClose();
     };
 
+    const handleDeleteEvent = () => {
+        if (isEditMode && eventId) {
+            removeEvent(eventId);
+            resetForm();
+            onClose();
+        }
+    };
+
     const resetForm = () => {
         setTitle('');
+        setEventId(null);
         setSelectedDate(new Date());
         setDateInputValue(format(new Date(), 'dd/MM/yyyy'));
         setStartTimeValue('09:00');
@@ -226,6 +284,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             title: false
         });
         setShowValidationErrors(false);
+        setIsEditMode(false);
     };
 
     const handleTitleChange = (e) => {
@@ -434,7 +493,11 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 setDescription={setDescription}
             />
 
-            <MenuFooter onAddEvent={handleAddEvent}/>
+            <MenuFooter
+                onAddEvent={handleSaveEvent}
+                isEditMode={isEditMode}
+                onDeleteEvent={handleDeleteEvent}
+            />
         </div>
     );
 };

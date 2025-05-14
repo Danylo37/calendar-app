@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useCalendar } from '../../context/CalendarProvider';
 
 const CalendarEvent = ({ event, style, onClick }) => {
     const { title, color } = event;
     const [, setIsHovering] = useState(false);
+    const { toggleEventForm } = useCalendar();
 
     const { isSmall, fontSize, ...visibleStyle } = style;
 
@@ -24,6 +26,24 @@ const CalendarEvent = ({ event, style, onClick }) => {
         setIsHovering(false);
     };
 
+    const handleEventClick = (e) => {
+        e.stopPropagation();
+
+        const rect = e.currentTarget.getBoundingClientRect();
+        const eventPosition = {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+        };
+
+        toggleEventForm(eventPosition, event);
+
+        if (onClick) {
+            onClick(e);
+        }
+    };
+
     const useCompactLayout = isSmall || parseInt(style.width) < 60;
 
     const timeFormat = `${event.startTime} - ${event.endTime}`;
@@ -32,10 +52,7 @@ const CalendarEvent = ({ event, style, onClick }) => {
         <div
             className="calendar-event"
             style={eventStyle}
-            onClick={(e) => {
-                e.stopPropagation();
-                onClick && onClick(e);
-            }}
+            onClick={handleEventClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
