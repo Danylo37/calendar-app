@@ -12,16 +12,36 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
     };
 
     const calculateEventStyle = (event, overlappingEvents) => {
-        const startTime = timeToDecimal(event.startTime);
-        const endTime = timeToDecimal(event.endTime);
-        const duration = endTime - startTime;
+        let startTime;
 
+        if (event.isContinuation) {
+            startTime = 0;
+        } else {
+            startTime = timeToDecimal(event.startTime);
+        }
+
+        const endTime = timeToDecimal(event.endTime);
+
+        let adjustedEndTime;
+        if (!event.isContinuation && event.crossesMidnight) {
+            adjustedEndTime = 24;
+        } else {
+            adjustedEndTime = endTime;
+        }
+
+        if (event.startTime === event.endTime && !event.isContinuation) {
+            adjustedEndTime = 24;
+        }
+
+        const duration = adjustedEndTime - startTime;
         const heightPercent = Math.max(duration * 100, 20);
 
         const startHour = Math.floor(startTime);
         const startMinutePercent = (startTime - startHour) * 100;
 
-        const eventIndex = overlappingEvents.findIndex(e => e.id === event.id);
+        const eventIndex = overlappingEvents.findIndex(e =>
+            e.id === event.id || (e.continuationId && e.continuationId === event.continuationId)
+        );
 
         let fontSize;
         if (duration <= 0.20) {
@@ -35,50 +55,76 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
         if (eventIndex === 0) {
             return {
                 top: `${startMinutePercent}%`,
-                height: `${heightPercent}%`,
+                height: `calc(${heightPercent}% + ${duration}px)`,
                 width: '100%',
                 left: '0',
                 zIndex: 1,
                 isSmall: duration < 0.5,
-                fontSize: fontSize
+                fontSize: fontSize,
+                isContinuation: event.isContinuation
             };
         } else {
             const pixelReduction = eventIndex * 25;
 
             return {
                 top: `${startMinutePercent}%`,
-                height: `${heightPercent}%`,
+                height: `calc(${heightPercent}% + ${duration}px)`,
                 width: `calc(100% - ${pixelReduction}px)`,
                 right: '0',
                 left: 'auto',
                 zIndex: eventIndex + 1,
                 isSmall: duration < 0.5,
-                fontSize: fontSize
+                fontSize: fontSize,
+                isContinuation: event.isContinuation
             };
         }
     };
 
     const findOverlappingEvents = (events, targetEvent) => {
-        const targetStart = timeToDecimal(targetEvent.startTime);
+        const targetStart = targetEvent.isContinuation
+            ? 0
+            : timeToDecimal(targetEvent.startTime);
+
         const targetEnd = timeToDecimal(targetEvent.endTime);
 
+        let adjustedTargetEnd;
+        if (targetEvent.startTime === targetEvent.endTime && !targetEvent.isContinuation) {
+            adjustedTargetEnd = 24;
+        } else if (targetEvent.crossesMidnight && !targetEvent.isContinuation) {
+            adjustedTargetEnd = 24;
+        } else {
+            adjustedTargetEnd = targetEnd;
+        }
+
         return events.filter(event => {
-            const eventStart = timeToDecimal(event.startTime);
+            const eventStart = event.isContinuation
+                ? 0
+                : timeToDecimal(event.startTime);
+
             const eventEnd = timeToDecimal(event.endTime);
 
+            let adjustedEventEnd;
+            if (event.startTime === event.endTime && !event.isContinuation) {
+                adjustedEventEnd = 24;
+            } else if (event.crossesMidnight && !event.isContinuation) {
+                adjustedEventEnd = 24;
+            } else {
+                adjustedEventEnd = eventEnd;
+            }
+
             return (
-                (eventStart < targetEnd && eventEnd > targetStart) ||
-                (targetStart < eventEnd && targetEnd > eventStart)
+                (eventStart < adjustedTargetEnd && adjustedEventEnd > targetStart) ||
+                (targetStart < adjustedEventEnd && adjustedTargetEnd > eventStart)
             );
         }).sort((a, b) => {
-            const aStart = timeToDecimal(a.startTime);
-            const bStart = timeToDecimal(b.startTime);
+            const aStart = a.isContinuation ? 0 : timeToDecimal(a.startTime);
+            const bStart = b.isContinuation ? 0 : timeToDecimal(b.startTime);
 
             if (aStart !== bStart) {
                 return aStart - bStart;
             }
 
-            return a.id - b.id;
+            return (a.originalEventId || a.id) - (b.originalEventId || b.id);
         });
     };
 
@@ -96,15 +142,32 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
                             const cellKey = `${day}-${hour}`;
 
                             const hourEvents = dayEvents.filter(event => {
-                                const startTime = timeToDecimal(event.startTime);
+                                const startTime = event.isContinuation
+                                    ? 0
+                                    : timeToDecimal(event.startTime);
+
                                 const endTime = timeToDecimal(event.endTime);
+
+                                let adjustedEndTime;
+                                if (event.startTime === event.endTime && !event.isContinuation) {
+                                    adjustedEndTime = 24;
+                                } else if (event.crossesMidnight && !event.isContinuation) {
+                                    adjustedEndTime = 24;
+                                } else {
+                                    adjustedEndTime = endTime;
+                                }
+
                                 const hourStart = hour;
                                 const hourEnd = hour + 1;
 
-                                return (startTime < hourEnd && endTime > hourStart);
+                                return (startTime < hourEnd && adjustedEndTime > hourStart);
                             });
 
                             const eventsStartingInThisHour = hourEvents.filter(event => {
+                                if (event.isContinuation) {
+                                    return hour === 0;
+                                }
+
                                 const startHour = parseInt(event.startTime.split(':')[0], 10);
                                 return startHour === hour;
                             });
@@ -126,9 +189,11 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
                                         const overlappingEvents = findOverlappingEvents(dayEvents, event);
                                         const eventStyle = calculateEventStyle(event, overlappingEvents);
 
+                                        const eventKey = event.continuationId || event.id;
+
                                         return (
                                             <CalendarEvent
-                                                key={event.id}
+                                                key={eventKey}
                                                 event={event}
                                                 style={eventStyle}
                                             />

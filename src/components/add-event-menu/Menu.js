@@ -88,7 +88,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         addEvent,
         updateEvent,
         removeEvent,
-        editingEvent
+        editingEvent,
+        checkEventCrossesMidnight
     } = useCalendar();
 
     const closeAllPickers = useCallback(() => {
@@ -314,7 +315,9 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const handleStartTimeChange = (time) => {
         setStartTimeValue(time);
 
-        validateTimeDuration(time, endTimeValue);
+        if (errors.duration) {
+            setErrors({...errors, duration: false});
+        }
     };
 
     const handleEndTimeChange = (time) => {
@@ -329,7 +332,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const [endHours, endMinutes] = endTime.split(':').map(Number);
 
-        const startTotalMinutes = startHours * 60 + startMinutes;
+        let startTotalMinutes = startHours * 60 + startMinutes;
         let endTotalMinutes = endHours * 60 + endMinutes;
 
         if (endTotalMinutes <= startTotalMinutes) {
@@ -342,25 +345,11 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const validateTimeDuration = (start, end) => {
         const duration = calculateDurationInMinutes(start, end);
 
-        if (duration < 5) {
-            const [startHours, startMinutes] = start.split(':').map(Number);
-            let newEndMinutes = startMinutes + 5;
-            let newEndHours = startHours;
-
-            if (newEndMinutes >= 60) {
-                newEndHours = (newEndHours + 1) % 24;
-                newEndMinutes = newEndMinutes % 60;
-            }
-
-            const formattedEndHours = newEndHours.toString().padStart(2, '0');
-            const formattedEndMinutes = newEndMinutes.toString().padStart(2, '0');
-            const newEndTime = `${formattedEndHours}:${formattedEndMinutes}`;
-
-            setEndTimeValue(newEndTime);
-            return false;
+        if (duration === 1440) {
+            return true;
         }
 
-        return true;
+        return duration >= 5;
     };
 
     const closeOtherDropdowns = (currentDropdown) => {
@@ -468,7 +457,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             category: selectedCategory,
             color: selectedColor,
             description: description,
-            reminder: selectedReminder
+            reminder: selectedReminder,
+            crossesMidnight: checkEventCrossesMidnight(startTimeValue, endTimeValue)
         };
 
         if (isEditMode && eventId) {
@@ -643,7 +633,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             />
 
             {errors.duration && showValidationErrors && (
-                <div className="duration-error-message">Event must be at least 5 minutes long</div>
+                <div className="duration-error-message">Event must be at least 5 minutes long (or exactly 24 hours)</div>
             )}
 
             <div className="event-form-row">

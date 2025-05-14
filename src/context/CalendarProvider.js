@@ -2,7 +2,7 @@ import React, { createContext, useContext } from 'react';
 import { useCalendarState } from './useCalendarState';
 import { useUIState } from './useUIState';
 import { useCategories } from './useCategories';
-import { useEvents } from './useEvents';
+import { useEvents, checkEventCrossesMidnight } from './useEvents';
 
 const CalendarContext = createContext(null);
 
@@ -22,7 +22,8 @@ export const CalendarProvider = ({ children }) => {
         ...uiState,
         ...categoryState,
         ...eventState,
-        removeCategory: handleRemoveCategory
+        removeCategory: handleRemoveCategory,
+        checkEventCrossesMidnight
     };
 
     return (

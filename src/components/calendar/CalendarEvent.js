@@ -6,7 +6,7 @@ const CalendarEvent = ({ event, style, onClick }) => {
     const [, setIsHovering] = useState(false);
     const { toggleEventForm } = useCalendar();
 
-    const { isSmall, fontSize, ...visibleStyle } = style;
+    const { isSmall, fontSize, isContinuation, ...visibleStyle } = style;
 
     const eventStyle = {
         ...visibleStyle,
@@ -37,7 +37,14 @@ const CalendarEvent = ({ event, style, onClick }) => {
             height: rect.height
         };
 
-        toggleEventForm(eventPosition, event);
+        const editEvent = event.isContinuation
+            ? {
+                ...event,
+                id: event.originalEventId || event.id,
+            }
+            : event;
+
+        toggleEventForm(eventPosition, editEvent);
 
         if (onClick) {
             onClick(e);
