@@ -12,6 +12,25 @@ import MenuFooter from './MenuFooter';
 import ReminderSelector from './ReminderSelector';
 import { availableIcons } from '../../constants/icons';
 
+const getCurrentTimeRoundedToNextHour = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    const nextHour = minutes === 0 ? hours : hours + 1;
+
+    const startHour = nextHour % 24;
+    const endHour = (startHour + 1) % 24;
+
+    const formattedStartHour = startHour.toString().padStart(2, '0');
+    const formattedEndHour = endHour.toString().padStart(2, '0');
+
+    const startTime = `${formattedStartHour}:00`;
+    const endTime = `${formattedEndHour}:00`;
+
+    return { startTime, endTime };
+};
+
 const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -21,8 +40,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-    const [startTimeValue, setStartTimeValue] = useState('09:00');
-    const [endTimeValue, setEndTimeValue] = useState('10:00');
+    const { startTime, endTime } = getCurrentTimeRoundedToNextHour();
+    const [startTimeValue, setStartTimeValue] = useState(startTime);
+    const [endTimeValue, setEndTimeValue] = useState(endTime);
+
     const [isStartTimePickerOpen, setIsStartTimePickerOpen] = useState(false);
     const [isEndTimePickerOpen, setIsEndTimePickerOpen] = useState(false);
 
@@ -35,6 +56,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
     const [selectedColor, setSelectedColor] = useState(colorOptions[6]);
 
+    const [isReminderDropdownOpen, setIsReminderDropdownOpen] = useState(false);
     const [selectedReminder, setSelectedReminder] = useState(null);
     const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
@@ -54,6 +76,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const dateInputRef = useRef(null);
     const startTimeInputRef = useRef(null);
     const endTimeInputRef = useRef(null);
+    const reminderDropdownRef = useRef(null);
+    const datePickerRef = useRef(null);
+    const startTimePickerRef = useRef(null);
+    const endTimePickerRef = useRef(null);
 
     const {
         closeAllUIElementsExcept,
@@ -64,6 +90,76 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         removeEvent,
         editingEvent
     } = useCalendar();
+
+    const closeAllPickers = useCallback(() => {
+        setIsDatePickerOpen(false);
+        setIsStartTimePickerOpen(false);
+        setIsEndTimePickerOpen(false);
+        setIsCategoryDropdownOpen(false);
+        setIsColorDropdownOpen(false);
+        setIsReminderDropdownOpen(false);
+        setIsAddingCategory(false);
+    }, []);
+
+    const resetForm = useCallback(() => {
+        setTitle('');
+        setEventId(null);
+        setSelectedDate(new Date());
+        setDateInputValue(format(new Date(), 'dd/MM/yyyy'));
+
+        const { startTime, endTime } = getCurrentTimeRoundedToNextHour();
+        setStartTimeValue(startTime);
+        setEndTimeValue(endTime);
+
+        setSelectedCategory(null);
+        setSelectedColor(colorOptions[6]);
+        setDescription('');
+        setSelectedReminder(null);
+        setErrors({
+            title: false,
+            duration: false
+        });
+        setShowValidationErrors(false);
+        setIsEditMode(false);
+
+        closeAllPickers();
+    }, [closeAllPickers]);
+
+    const handleCloseForm = useCallback(() => {
+        closeAllPickers();
+        onClose();
+    }, [closeAllPickers, onClose]);
+
+    const handleFormClick = useCallback((e) => {
+        if (
+            (categoryDropdownRef.current && categoryDropdownRef.current.contains(e.target)) ||
+            (colorDropdownRef.current && colorDropdownRef.current.contains(e.target)) ||
+            (datePickerRef.current && datePickerRef.current.contains(e.target)) ||
+            (startTimePickerRef.current && startTimePickerRef.current.contains(e.target)) ||
+            (endTimePickerRef.current && endTimePickerRef.current.contains(e.target)) ||
+            (reminderDropdownRef.current && reminderDropdownRef.current.contains(e.target)) ||
+            (dateInputRef.current && dateInputRef.current.contains(e.target)) ||
+            (startTimeInputRef.current && startTimeInputRef.current.contains(e.target)) ||
+            (endTimeInputRef.current && endTimeInputRef.current.contains(e.target)) ||
+            e.target.closest('.dropdown-field') ||
+            e.target.closest('.time-slots-container') ||
+            e.target.closest('.timepicker-container') ||
+            e.target.closest('.datepicker-container') ||
+            e.target.closest('.category-dropdown') ||
+            e.target.closest('.color-dropdown') ||
+            e.target.closest('.reminder-dropdown')
+        ) {
+            return;
+        }
+
+        closeAllPickers();
+    }, [closeAllPickers]);
+
+    useEffect(() => {
+        if (isOpen) {
+            closeAllPickers();
+        }
+    }, [isOpen, closeAllPickers]);
 
     const calculatePosition = useCallback((triggerPos, formWidth, formHeight) => {
         if (!triggerPos) return { x: 0, y: 0 };
@@ -109,8 +205,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 console.error('Error parsing date:', error);
             }
 
-            setStartTimeValue(editingEvent.startTime || '09:00');
-            setEndTimeValue(editingEvent.endTime || '10:00');
+            setStartTimeValue(editingEvent.startTime || startTime);
+            setEndTimeValue(editingEvent.endTime || endTime);
 
             setSelectedCategory(editingEvent.category || null);
 
@@ -125,7 +221,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 setIsEditMode(false);
             }
         }
-    }, [editingEvent, isOpen]);
+    }, [editingEvent, isOpen, startTime, endTime, resetForm]);
 
     useEffect(() => {
         if (isOpen && formRef.current && triggerPosition) {
@@ -267,20 +363,13 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         return true;
     };
 
-    const closeAllPickers = () => {
-        setIsDatePickerOpen(false);
-        setIsStartTimePickerOpen(false);
-        setIsEndTimePickerOpen(false);
-        setIsCategoryDropdownOpen(false);
-        setIsColorDropdownOpen(false);
-    };
-
     const closeOtherDropdowns = (currentDropdown) => {
         if (currentDropdown !== 'datePicker') setIsDatePickerOpen(false);
         if (currentDropdown !== 'startTimePicker') setIsStartTimePickerOpen(false);
         if (currentDropdown !== 'endTimePicker') setIsEndTimePickerOpen(false);
         if (currentDropdown !== 'category') setIsCategoryDropdownOpen(false);
         if (currentDropdown !== 'color') setIsColorDropdownOpen(false);
+        if (currentDropdown !== 'reminder') setIsReminderDropdownOpen(false);
     };
 
     const toggleCategoryDropdown = () => {
@@ -305,6 +394,13 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
     };
 
+    const toggleReminderDropdown = (newState) => {
+        setIsReminderDropdownOpen(newState);
+        if (newState) {
+            closeOtherDropdowns('reminder');
+        }
+    };
+
     const handleSelectCategory = (category) => {
         setSelectedCategory(category);
         setIsCategoryDropdownOpen(false);
@@ -322,6 +418,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     const handleSelectReminder = (reminder) => {
         setSelectedReminder(reminder);
+        setIsReminderDropdownOpen(false);
     };
 
     const handleClearReminder = (e) => {
@@ -384,34 +481,15 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
 
         resetForm();
-        onClose();
+        handleCloseForm();
     };
 
     const handleDeleteEvent = () => {
         if (isEditMode && eventId) {
             removeEvent(eventId);
             resetForm();
-            onClose();
+            handleCloseForm();
         }
-    };
-
-    const resetForm = () => {
-        setTitle('');
-        setEventId(null);
-        setSelectedDate(new Date());
-        setDateInputValue(format(new Date(), 'dd/MM/yyyy'));
-        setStartTimeValue('09:00');
-        setEndTimeValue('10:00');
-        setSelectedCategory(null);
-        setSelectedColor(colorOptions[6]);
-        setDescription('');
-        setSelectedReminder(null);
-        setErrors({
-            title: false,
-            duration: false
-        });
-        setShowValidationErrors(false);
-        setIsEditMode(false);
     };
 
     const handleTitleChange = (e) => {
@@ -435,7 +513,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (isOpen && formRef.current && !formRef.current.contains(event.target)) {
-                onClose();
+                handleCloseForm();
             }
         };
 
@@ -443,7 +521,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, handleCloseForm]);
 
     const handleMouseDown = useCallback((e) => {
         if (e.target.closest('.form-header')) {
@@ -458,7 +536,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             closeAllUIElementsExcept('eventForm');
             closeAllPickers();
         }
-    }, [closeAllUIElementsExcept]);
+    }, [closeAllUIElementsExcept, closeAllPickers]);
 
     const handleMouseMove = useCallback((e) => {
         if (isDragging && formRef.current) {
@@ -518,9 +596,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 left: `${position.x}px`,
                 top: `${position.y}px`
             }}
+            onClick={handleFormClick}
         >
             <MenuHeader
-                onClose={onClose}
+                onClose={handleCloseForm}
                 onMouseDown={handleMouseDown}
             />
 
@@ -558,6 +637,9 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 endTimeInputRef={endTimeInputRef}
                 setStartTimeValue={setStartTimeValue}
                 setEndTimeValue={setEndTimeValue}
+                datePickerRef={datePickerRef}
+                startTimePickerRef={startTimePickerRef}
+                endTimePickerRef={endTimePickerRef}
             />
 
             {errors.duration && showValidationErrors && (
@@ -594,12 +676,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 <ReminderSelector
                     selectedReminder={selectedReminder}
                     onChange={handleSelectReminder}
-                    onDropdownToggle={(isOpen) => {
-                        if (isOpen) {
-                            closeOtherDropdowns('reminder');
-                        }
-                    }}
+                    isDropdownOpen={isReminderDropdownOpen}
+                    onDropdownToggle={toggleReminderDropdown}
                     handleClearReminder={handleClearReminder}
+                    dropdownRef={reminderDropdownRef}
                 />
             </div>
 

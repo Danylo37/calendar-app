@@ -23,7 +23,10 @@ const DateTimeSelector = ({
                               startTimeInputRef,
                               endTimeInputRef,
                               setStartTimeValue,
-                              setEndTimeValue
+                              setEndTimeValue,
+                              datePickerRef,
+                              startTimePickerRef,
+                              endTimePickerRef
                           }) => {
     return (
         <div className="event-form-row date-time-row">
@@ -48,6 +51,7 @@ const DateTimeSelector = ({
                     onDateChange={handleDateChange}
                     isOpen={isDatePickerOpen}
                     onClose={() => setIsDatePickerOpen(false)}
+                    pickerRef={datePickerRef}
                 />
             </div>
 
@@ -74,6 +78,7 @@ const DateTimeSelector = ({
                         isOpen={isStartTimePickerOpen}
                         onClose={() => setIsStartTimePickerOpen(false)}
                         isEndTime={false}
+                        pickerRef={startTimePickerRef}
                     />
                 </div>
 
@@ -102,6 +107,7 @@ const DateTimeSelector = ({
                         onClose={() => setIsEndTimePickerOpen(false)}
                         comparisonTime={startTimeValue}
                         isEndTime={true}
+                        pickerRef={endTimePickerRef}
                     />
                 </div>
             </div>

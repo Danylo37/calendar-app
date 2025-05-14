@@ -127,24 +127,22 @@ const reminderOptions = [
     { id: 'custom', value: null, unit: null, displayShort: 'Custom', isCustomOption: true }
 ];
 
-const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handleClearReminder }) => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const ReminderSelector = ({ selectedReminder, onChange, isDropdownOpen, onDropdownToggle, handleClearReminder, dropdownRef }) => {
     const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const localDropdownRef = useRef(null);
 
-    useClickOutside(dropdownRef, () => setIsDropdownOpen(false), true);
+    const reminderDropdownRef = dropdownRef || localDropdownRef;
 
     const toggleDropdown = () => {
         const newState = !isDropdownOpen;
-        setIsDropdownOpen(newState);
         if (onDropdownToggle) {
-            onDropdownToggle(newState ? 'reminder' : null);
+            onDropdownToggle(newState);
         }
     };
 
     const handleSelectReminder = (option) => {
         if (option.isCustomOption) {
-            setIsDropdownOpen(false);
+            onDropdownToggle(false);
             setIsCustomModalOpen(true);
             return;
         }
@@ -152,7 +150,6 @@ const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handle
         if (onChange) {
             onChange(option);
         }
-        setIsDropdownOpen(false);
     };
 
     const handleCustomReminderSave = (customReminder) => {
@@ -164,7 +161,7 @@ const ReminderSelector = ({ selectedReminder, onChange, onDropdownToggle, handle
 
     return (
         <>
-            <div className="reminder-dropdown-container" ref={dropdownRef}>
+            <div className="reminder-dropdown-container" ref={reminderDropdownRef}>
                 <div
                     className="event-form-input dropdown-field reminder-selector"
                     onClick={toggleDropdown}

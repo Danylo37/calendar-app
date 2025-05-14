@@ -55,6 +55,7 @@
     border-radius: 8px;
     transition: all 0.2s;
     text-align: center;
+    align-content: center;
 }
 
 .duration-error-message {

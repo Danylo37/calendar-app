@@ -87,6 +87,10 @@ function Header() {
         }
     };
 
+    const handleCloseEventForm = () => {
+        toggleEventForm();
+    };
+
     return (
         <>
             <header className="header">
@@ -152,7 +156,7 @@ function Header() {
 
             <Menu
                 isOpen={isEventFormOpen}
-                onClose={() => toggleEventForm()}
+                onClose={handleCloseEventForm}
                 triggerPosition={eventButtonPosition}
             />
         </>

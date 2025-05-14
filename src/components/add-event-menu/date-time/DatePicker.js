@@ -15,9 +15,11 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import '../../../styles/DatePicker.css';
 
-const DatePicker = ({ selectedDate, onDateChange, isOpen, onClose }) => {
+const DatePicker = ({ selectedDate, onDateChange, isOpen, onClose, pickerRef }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
-    const datePickerRef = useRef(null);
+    const localDatePickerRef = useRef(null);
+
+    const datePickerRef = pickerRef || localDatePickerRef;
 
     useEffect(() => {
         if (isOpen && selectedDate) {
@@ -41,7 +43,7 @@ const DatePicker = ({ selectedDate, onDateChange, isOpen, onClose }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, datePickerRef]);
 
     const prevMonth = () => {
         setCurrentMonth(subMonths(currentMonth, 1));
