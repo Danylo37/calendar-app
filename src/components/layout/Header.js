@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
     PlusCircle, ChevronLeft, ChevronRight, ChevronDown,
-    CalendarDays, CalendarRange, CalendarClock
+    CalendarDays, CalendarRange, CalendarClock, Settings
 } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
 import CategoryManager from '../category/CategoryManager';
 import Menu from '../add-event-menu/Menu';
+import SettingsModal from '../settings/SettingsModal';
 import '../../styles/layout/Header.css';
 
 function Header() {
@@ -15,6 +16,7 @@ function Header() {
         setViewMode,
         goToPrevious,
         goToNext,
+        goToToday,
         isEventFormOpen,
         eventButtonPosition,
         isViewDropdownOpen,
@@ -22,6 +24,7 @@ function Header() {
         toggleViewDropdown
     } = useCalendar();
 
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const addEventButtonRef = useRef(null);
 
@@ -91,6 +94,14 @@ function Header() {
         toggleEventForm();
     };
 
+    const handleOpenSettings = () => {
+        setIsSettingsOpen(true);
+    };
+
+    const handleCloseSettings = () => {
+        setIsSettingsOpen(false);
+    };
+
     return (
         <>
             <header className="header">
@@ -142,8 +153,14 @@ function Header() {
                         )}
                     </div>
                     <CategoryManager />
+                    <button className="settings-btn btn" onClick={handleOpenSettings}>
+                        <Settings size={18} />
+                    </button>
                 </div>
                 <div className="header-right">
+                    <button className="btn today-btn" onClick={() => goToToday()}>
+                        Today
+                    </button>
                     <button className="btn nav-btn" onClick={() => goToPrevious()}>
                         <ChevronLeft size={22} />
                     </button>
@@ -158,6 +175,11 @@ function Header() {
                 isOpen={isEventFormOpen}
                 onClose={handleCloseEventForm}
                 triggerPosition={eventButtonPosition}
+            />
+
+            <SettingsModal
+                isOpen={isSettingsOpen}
+                onClose={handleCloseSettings}
             />
         </>
     );

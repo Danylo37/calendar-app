@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { saveToLocalStorage, loadFromLocalStorage, STORAGE_KEYS } from '../utils/localStorage';
+
+const DEFAULT_CATEGORIES = [
+    { id: 1, name: 'Work', icon: 'Briefcase', selected: true },
+    { id: 2, name: 'Home', icon: 'Home', selected: true },
+    { id: 3, name: 'Personal', icon: 'Heart', selected: true }
+];
 
 export const useCategories = () => {
-    const [categories, setCategories] = useState([
-        { id: 1, name: 'Work', icon: 'Briefcase', selected: true },
-        { id: 2, name: 'Home', icon: 'Home', selected: true },
-        { id: 3, name: 'Personal', icon: 'Heart', selected: true }
-    ]);
+    const [categories, setCategories] = useState(() => {
+        return loadFromLocalStorage(STORAGE_KEYS.CATEGORIES, DEFAULT_CATEGORIES);
+    });
+
+    useEffect(() => {
+        saveToLocalStorage(STORAGE_KEYS.CATEGORIES, categories);
+    }, [categories]);
 
     const addCategory = (name, icon) => {
         const newCategory = {
@@ -35,10 +44,15 @@ export const useCategories = () => {
         );
     };
 
+    const resetToDefaultCategories = () => {
+        setCategories(DEFAULT_CATEGORIES);
+    };
+
     return {
         categories,
         addCategory,
         removeCategory,
-        toggleCategorySelection
+        toggleCategorySelection,
+        resetToDefaultCategories
     };
 };

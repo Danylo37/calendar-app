@@ -58,6 +58,10 @@
     background-color: #b9bfff;
 }
 
+.settings-btn {
+    padding: 0.7rem;
+}
+
 .nav-btn {
     background-color: transparent;
     color: #8466D7;
@@ -73,6 +77,19 @@
 
 .nav-btn:hover {
     background-color: #f0f0f0;
+}
+
+.today-btn {
+    background-color: #F3EFFF;
+    color: #8466D7;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border-radius: 0.8rem;
+    transition: all 0.2s;
+}
+
+.today-btn:hover {
+    background-color: #EAE4FF;
 }
 
 .date-display {

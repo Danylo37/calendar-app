@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, subDays } from 'date-fns';
+import { saveToLocalStorage, loadFromLocalStorage, STORAGE_KEYS } from '../utils/localStorage';
 
 export const checkEventCrossesMidnight = (startTime, endTime) => {
     const startHours = parseInt(startTime.split(':')[0], 10);
@@ -13,7 +14,13 @@ export const checkEventCrossesMidnight = (startTime, endTime) => {
 };
 
 export const useEvents = () => {
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState(() => {
+        return loadFromLocalStorage(STORAGE_KEYS.EVENTS, []);
+    });
+
+    useEffect(() => {
+        saveToLocalStorage(STORAGE_KEYS.EVENTS, events);
+    }, [events]);
 
     const addEvent = (eventData) => {
         const crossesMidnight = checkEventCrossesMidnight(eventData.startTime, eventData.endTime);
@@ -113,6 +120,10 @@ export const useEvents = () => {
         );
     };
 
+    const clearAllEvents = () => {
+        setEvents([]);
+    };
+
     return {
         events,
         setEvents,
@@ -121,6 +132,7 @@ export const useEvents = () => {
         getEventsForDay,
         removeEvent,
         updateEventsAfterCategoryDelete,
-        checkEventCrossesMidnight
+        checkEventCrossesMidnight,
+        clearAllEvents
     };
 };

@@ -1,0 +1,138 @@
+@import '../ModalCommon.css';
+
+.settings-modal {
+    background-color: #fff;
+    border-radius: 20px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform: translateY(0);
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+    z-index: 2001;
+}
+
+.settings-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #F3EFFF;
+    border-bottom: 1px solid #eee;
+}
+
+.settings-modal-header h3 {
+    margin: 0;
+    color: #6540CE;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.settings-modal-content {
+    padding: 20px;
+}
+
+.settings-section {
+    margin-bottom: 24px;
+}
+
+.settings-section h4 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.setting-item {
+    margin-bottom: 16px;
+}
+
+.reset-categories-btn,
+.clear-data-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reset-categories-btn {
+    background-color: #f2f2f2;
+    color: #666;
+}
+
+.reset-categories-btn:hover {
+    background-color: #e5e5e5;
+}
+
+.clear-data-btn {
+    background-color: #ff5c5c;
+    color: white;
+}
+
+.clear-data-btn:hover {
+    background-color: #ff3838;
+}
+
+.confirm-clear-container {
+    background-color: #fff5f5;
+    border: 1px solid #ffe0e0;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.confirm-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: #ff3838;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cancel-btn,
+.confirm-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background-color: #f2f2f2;
+    color: #666;
+}
+
+.cancel-btn:hover {
+    background-color: #e5e5e5;
+}
+
+.confirm-btn {
+    background-color: #ff5c5c;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #ff3838;
+}
+
+.version-info {
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
