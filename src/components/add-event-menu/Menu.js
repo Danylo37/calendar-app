@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../../styles/EventForm.css';
-import { Briefcase, Edit, ArrowRight } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import MenuHeader from './MenuHeader';
 import DateTimeSelector from './date-time/DateTimeSelector';
 import CategorySelector from './CategorySelector';
@@ -43,7 +43,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [isPositionCalculated, setIsPositionCalculated] = useState(false);
     const [isViewMode, setIsViewMode] = useState(false);
 
-    // Новое состояние для отслеживания локального обновления
     const [localUpdated, setLocalUpdated] = useState(false);
     const [eventId, setEventId] = useState(null);
 
@@ -99,12 +98,9 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         checkEventCrossesMidnight
     } = useCalendar();
 
-    // Отслеживаем изменение флага localUpdated
     useEffect(() => {
         if (localUpdated && isOpen) {
-            // Переключаемся в режим просмотра с обновленными данными
             setIsViewMode(true);
-            // Сбрасываем флаг
             setLocalUpdated(false);
         }
     }, [localUpdated, isOpen]);
@@ -213,7 +209,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     useEffect(() => {
         if (editingEvent && isOpen) {
-            // When opening with an existing event, start in view mode
             setIsViewMode(true);
             setIsEditMode(true);
             setEventId(editingEvent.id);
@@ -499,19 +494,15 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         };
 
         if (isEditMode && eventId) {
-            // Update the existing event
             updateEvent({
                 ...eventData,
                 id: eventId
             });
 
-            // Установим флаг, что у нас было локальное обновление
             setLocalUpdated(true);
 
-            // После сохранения переключаемся обратно в режим просмотра
             setIsViewMode(true);
         } else {
-            // Для новых событий, добавляем событие и закрываем форму
             addEvent(eventData);
             resetForm();
             handleCloseForm();
