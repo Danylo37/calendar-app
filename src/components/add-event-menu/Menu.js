@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import '../../styles/EventForm.css';
-import { Briefcase } from 'lucide-react';
+import { List } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
 import { format } from 'date-fns';
 import MenuHeader from './MenuHeader';
@@ -57,7 +57,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [selectedIcon, setSelectedIcon] = useState('Briefcase');
+    const [selectedIcon, setSelectedIcon] = useState('List');
 
     const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
     const [selectedColor, setSelectedColor] = useState(colorOptions[6]);
@@ -143,6 +143,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         setIsEditMode(false);
         setIsViewMode(false);
         setLocalUpdated(false);
+        setSelectedIcon('List');
 
         closeAllPickers();
     }, [closeAllPickers]);
@@ -454,7 +455,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             setSelectedCategory(newCategory);
             setNewCategoryName('');
             setIsAddingCategory(false);
-            setSelectedIcon('Briefcase');
+            setSelectedIcon('List');
             setIsCategoryDropdownOpen(false);
         }
     };
@@ -533,7 +534,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             const IconComponent = icon.component;
             return <IconComponent size={size} />;
         }
-        return <Briefcase size={size} />;
+        return <List size={size} />;
     };
 
     const handleSwitchToEditMode = () => {

@@ -8,7 +8,7 @@ import '../../styles/CategoryManager.css';
 function CategoryManager() {
     const [newCategoryName, setNewCategoryName] = useState('');
     const [isAddingCategory, setIsAddingCategory] = useState(false);
-    const [selectedIcon, setSelectedIcon] = useState('Briefcase');
+    const [selectedIcon, setSelectedIcon] = useState('List');
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
     const [categoryEventsCount, setCategoryEventsCount] = useState(0);

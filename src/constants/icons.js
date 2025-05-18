@@ -11,10 +11,12 @@ import {
     Film,
     Music,
     ShoppingBag,
-    GraduationCap
+    GraduationCap,
+    List
 } from 'lucide-react';
 
 export const availableIcons = [
+    { name: 'List', component: List },
     { name: 'Briefcase', component: Briefcase },
     { name: 'Home', component: Home },
     { name: 'Heart', component: Heart },
