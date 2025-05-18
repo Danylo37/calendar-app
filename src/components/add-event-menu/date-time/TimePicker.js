@@ -20,17 +20,32 @@ const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTim
     const timeSlotsContainerRef = useRef(null);
     const selectedTimeRef = useRef(null);
     const localContainerRef = useRef(null);
+    const isMountedRef = useRef(true);
 
     const containerRef = pickerRef || localContainerRef;
 
     useEffect(() => {
-        if (isOpen && selectedTimeRef.current && timeSlotsContainerRef.current) {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isOpen && timeSlotsContainerRef.current) {
             setTimeout(() => {
-                selectedTimeRef.current.scrollIntoView({
-                    behavior: 'auto',
-                    block: 'center'
-                });
-            }, 50);
+                if (isMountedRef.current &&
+                    timeSlotsContainerRef.current &&
+                    selectedTimeRef.current) {
+                    try {
+                        selectedTimeRef.current.scrollIntoView({
+                            behavior: 'auto',
+                            block: 'center'
+                        });
+                    } catch (error) {
+                        console.log('Error while scrolling in TimePicker:', error);
+                    }
+                }
+            }, 100);
         }
     }, [isOpen, selectedTime]);
 
@@ -62,19 +77,22 @@ const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTim
 
             <div className="timepicker-content">
                 <div className="time-slots-container" ref={timeSlotsContainerRef}>
-                    {timeSlots.map(time => (
-                        <div
-                            key={time}
-                            className={`time-slot ${selectedTime === time ? 'time-slot-selected' : ''}`}
-                            onClick={() => handleTimeSelection(time)}
-                            ref={selectedTime === time ? selectedTimeRef : null}
-                        >
-                            {time}
-                            {isTimeEarlierOrEqual(time, comparisonTime) && (
-                                <span className="tomorrow-indicator"> (tomorrow)</span>
-                            )}
-                        </div>
-                    ))}
+                    {timeSlots.map(time => {
+                        const isSelected = selectedTime === time;
+                        return (
+                            <div
+                                key={time}
+                                className={`time-slot ${isSelected ? 'time-slot-selected' : ''}`}
+                                onClick={() => handleTimeSelection(time)}
+                                ref={isSelected ? selectedTimeRef : null}
+                            >
+                                {time}
+                                {isTimeEarlierOrEqual(time, comparisonTime) && (
+                                    <span className="tomorrow-indicator"> (tomorrow)</span>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>
