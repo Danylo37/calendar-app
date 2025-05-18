@@ -2,7 +2,7 @@ import React from 'react';
 import { useCalendar } from '../../context/CalendarProvider';
 import CalendarEvent from './CalendarEvent';
 
-function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, onSelectTimeSlot }) {
+function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, onSelectTimeSlot, isEventFormOpen }) {
     const currentTimePosition = currentHour + (currentMinute / 60);
     const { getEventsForDay, categories } = useCalendar();
 
@@ -175,8 +175,21 @@ function TimeGrid({ weekDays, timeSlots, isToday, currentHour, currentMinute, on
                             return (
                                 <div
                                     key={cellKey}
-                                    className={`time-cell ${hour === 0 ? 'midnight-cell' : ''}`}
-                                    onClick={() => onSelectTimeSlot && onSelectTimeSlot(day, hour)}
+                                    className={`time-cell ${hour === 0 ? 'midnight-cell' : ''} ${isEventFormOpen ? 'disabled' : ''}`}
+                                    onClick={(e) => {
+                                        if (isEventFormOpen) return;
+
+                                        if (onSelectTimeSlot) {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            const cellPosition = {
+                                                top: rect.top,
+                                                left: rect.left,
+                                                width: rect.width,
+                                                height: rect.height
+                                            };
+                                            onSelectTimeSlot(day, hour, cellPosition);
+                                        }
+                                    }}
                                 >
                                     {isToday(day) && hour === Math.floor(currentTimePosition) && (
                                         <div

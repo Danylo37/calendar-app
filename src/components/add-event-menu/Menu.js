@@ -39,6 +39,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+    const [isPositionCalculated, setIsPositionCalculated] = useState(false);
 
     const { startTime, endTime } = getCurrentTimeRoundedToNextHour();
     const [startTimeValue, setStartTimeValue] = useState(startTime);
@@ -89,8 +90,15 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         updateEvent,
         removeEvent,
         editingEvent,
+        selectedTimeSlotForForm,
         checkEventCrossesMidnight
     } = useCalendar();
+
+    useEffect(() => {
+        if (!isOpen) {
+            setIsPositionCalculated(false);
+        }
+    }, [isOpen]);
 
     const closeAllPickers = useCallback(() => {
         setIsDatePickerOpen(false);
@@ -216,13 +224,19 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             setDescription(editingEvent.description || '');
 
             setSelectedReminder(editingEvent.reminder || null);
+        } else if (isOpen && selectedTimeSlotForForm) {
+            setSelectedDate(selectedTimeSlotForForm.day);
+            setDateInputValue(format(selectedTimeSlotForForm.day, 'dd/MM/yyyy'));
+            setStartTimeValue(selectedTimeSlotForForm.startTime);
+            setEndTimeValue(selectedTimeSlotForForm.endTime);
+            setIsEditMode(false);
         } else {
             if (isOpen && !editingEvent) {
                 resetForm();
                 setIsEditMode(false);
             }
         }
-    }, [editingEvent, isOpen, startTime, endTime, resetForm]);
+    }, [editingEvent, isOpen, startTime, endTime, resetForm, selectedTimeSlotForForm]);
 
     useEffect(() => {
         if (isOpen && formRef.current && triggerPosition) {
@@ -239,10 +253,12 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                     } else {
                         formRef.current.style.transformOrigin = 'top left';
                     }
+
+                    setIsPositionCalculated(true);
                 }
             };
 
-            setTimeout(updateFormDimensions, 0);
+            requestAnimationFrame(updateFormDimensions);
         }
     }, [isOpen, triggerPosition, calculatePosition]);
 
@@ -581,7 +597,7 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     return (
         <div
             ref={formRef}
-            className={`event-form ${isOpen ? 'active' : ''}`}
+            className={`event-form ${isOpen ? 'active' : ''} ${isPositionCalculated ? 'position-calculated' : ''}`}
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`

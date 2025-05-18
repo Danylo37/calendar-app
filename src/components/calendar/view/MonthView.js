@@ -13,7 +13,7 @@ import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
 import { useCalendar } from '../../../context/CalendarProvider';
 import "../../../styles/view/MonthView.css";
 
-function MonthView({ currentDate }) {
+function MonthView({ currentDate, onSelectTimeSlot, isEventFormOpen }) {
     const { isToday } = useCalendarUtils();
     const { getEventsForDay, categories } = useCalendar();
 
@@ -94,7 +94,31 @@ function MonthView({ currentDate }) {
                                 key={format(day, 'yyyy-MM-dd')}
                                 className={`month-day 
                                 ${!isSameMonth(day, currentDate) ? 'other-month' : ''} 
-                                ${isToday(day) ? 'today' : ''}`}
+                                ${isToday(day) ? 'today' : ''}
+                                ${isEventFormOpen ? 'disabled' : ''}`}
+                                onClick={(e) => {
+                                    if (isEventFormOpen) return;
+
+                                    if (onSelectTimeSlot) {
+                                        const rect = e.currentTarget.getBoundingClientRect();
+                                        const cellPosition = {
+                                            top: rect.top,
+                                            left: rect.left,
+                                            width: rect.width,
+                                            height: rect.height
+                                        };
+
+                                        const now = new Date();
+                                        const currentHour = now.getHours();
+                                        let hour = 8;
+
+                                        if (isToday(day) && currentHour >= 8 && currentHour < 18) {
+                                            hour = currentHour;
+                                        }
+
+                                        onSelectTimeSlot(day, hour, cellPosition);
+                                    }
+                                }}
                             >
                                 <div className="day-number">{format(day, 'd')}</div>
                                 <div className="day-events">

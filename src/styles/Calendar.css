@@ -88,3 +88,23 @@
 .day-column {
     position: relative;
 }
+
+.calendar-container.form-open .time-cell,
+.calendar-container.form-open .month-day {
+    cursor: default;
+}
+
+.time-cell.disabled:hover,
+.month-day.disabled:hover {
+    background-color: inherit !important;
+}
+
+.time-cell.disabled,
+.month-day.disabled {
+    pointer-events: none;
+}
+
+.time-cell.disabled .calendar-event,
+.month-day.disabled .event {
+    pointer-events: auto;
+}

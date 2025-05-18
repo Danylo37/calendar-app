@@ -4,7 +4,7 @@ import TimeGrid from '../TimeGrid';
 import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
 import "../../../styles/view/DayView.css";
 
-function DayView({ currentDate, onSelectTimeSlot }) {
+function DayView({ currentDate, onSelectTimeSlot, isEventFormOpen }) {
     const {
         timeSlots,
         currentHour,
@@ -53,6 +53,7 @@ function DayView({ currentDate, onSelectTimeSlot }) {
                     currentHour={currentHour}
                     currentMinute={currentMinute}
                     onSelectTimeSlot={onSelectTimeSlot || (() => {})}
+                    isEventFormOpen={isEventFormOpen}
                 />
             </div>
         </div>

@@ -6,6 +6,7 @@ export const useUIState = () => {
     const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false);
     const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState(null);
+    const [selectedTimeSlotForForm, setSelectedTimeSlotForForm] = useState(null);
 
     const closeAllUIElementsExcept = (elementToKeepOpen) => {
         if (elementToKeepOpen !== 'eventForm') setIsEventFormOpen(false);
@@ -13,14 +14,16 @@ export const useUIState = () => {
         if (elementToKeepOpen !== 'categoryMenu') setIsCategoryMenuOpen(false);
     };
 
-    const toggleEventForm = (buttonPosition = null, event = null) => {
+    const toggleEventForm = (buttonPosition = null, event = null, timeSlotData = null) => {
         if (!isEventFormOpen) {
             if (buttonPosition) {
                 setEventButtonPosition(buttonPosition);
             }
             setEditingEvent(event);
+            setSelectedTimeSlotForForm(timeSlotData);
         } else {
             setEditingEvent(null);
+            setSelectedTimeSlotForForm(null);
         }
 
         const newState = !isEventFormOpen;
@@ -54,6 +57,7 @@ export const useUIState = () => {
         isViewDropdownOpen,
         isCategoryMenuOpen,
         editingEvent,
+        selectedTimeSlotForForm,
         toggleEventForm,
         toggleViewDropdown,
         toggleCategoryMenu,

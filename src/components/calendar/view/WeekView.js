@@ -4,7 +4,7 @@ import TimeGrid from '../TimeGrid';
 import { useCalendarUtils } from '../../../hooks/useCalendarUtils';
 import "../../../styles/view/WeekView.css";
 
-function WeekView({ currentDate, onSelectTimeSlot }) {
+function WeekView({ currentDate, onSelectTimeSlot, isEventFormOpen }) {
     const {
         timeSlots,
         currentHour,
@@ -58,6 +58,7 @@ function WeekView({ currentDate, onSelectTimeSlot }) {
                     currentHour={currentHour}
                     currentMinute={currentMinute}
                     onSelectTimeSlot={onSelectTimeSlot}
+                    isEventFormOpen={isEventFormOpen}
                 />
             </div>
         </div>
