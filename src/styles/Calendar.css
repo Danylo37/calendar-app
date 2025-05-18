@@ -47,13 +47,16 @@
 .event-description {
     margin-top: 1px;
     opacity: 0.8;
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
     width: 100%;
     line-height: 1.1;
     font-style: italic;
     color: #555;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    max-height: calc(100% - 37px);
 }
 
 .event-compact {

@@ -70,10 +70,21 @@ const CalendarEvent = ({ event, style, onClick }) => {
     };
 
     const eventDuration = calculateDurationInMinutes();
-    const shouldShowDescription = !isSmall && parseInt(style.width) >= 60 && eventDuration >= 50 && event.description;
+    const shouldShowDescription = !isSmall && parseInt(style.width) >= 60 && eventDuration >= 30 && event.description;
     const useCompactLayout = isSmall || parseInt(style.width) < 60;
 
     const timeFormat = `${event.startTime} - ${event.endTime}`;
+
+    const getDescriptionStyle = () => {
+        const heightPx = parseFloat(style.height);
+        const titleTimeHeight = 40;
+        const maxLines = Math.max(1, Math.floor((heightPx - titleTimeHeight) / 16));
+
+        return {
+            maxHeight: `${heightPx - titleTimeHeight}px`,
+            WebkitLineClamp: maxLines
+        };
+    };
 
     return (
         <div
@@ -92,7 +103,7 @@ const CalendarEvent = ({ event, style, onClick }) => {
                     <div className="event-title">{title}</div>
                     <div className="event-time">{timeFormat}</div>
                     {shouldShowDescription && (
-                        <div className="event-description">
+                        <div className="event-description" style={getDescriptionStyle()}>
                             {event.description}
                         </div>
                     )}
