@@ -44,6 +44,7 @@ const CalendarEvent = ({ event, style, onClick }) => {
             }
             : event;
 
+        // Open in view mode when clicking an event
         toggleEventForm(eventPosition, editEvent);
 
         if (onClick) {
