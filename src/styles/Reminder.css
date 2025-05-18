@@ -1,0 +1,88 @@
+@import './ModalCommon.css';
+
+.reminder-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.reminder-popup {
+    background-color: #fff;
+    border-radius: 20px;
+    width: 350px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transform: translateY(0);
+    animation: slideUp 0.3s ease-out;
+    border-left: 5px solid;
+}
+
+.reminder-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #F3EFFF;
+}
+
+.reminder-popup-content {
+    padding: 20px;
+}
+
+.reminder-popup-content h2 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.reminder-popup-content p {
+    margin: 0 0 15px;
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.reminder-popup-content .event-time {
+    font-weight: 600;
+    margin-top: 8px;
+    display: block;
+    color: #555;
+}
+
+.reminder-popup-content .event-description {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+.reminder-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    background-color: #fafafa;
+}
+
+.reminder-popup-dismiss {
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s;
+    background-color: #8466D7;
+    color: white;
+}
+
+.reminder-popup-dismiss:hover {
+    background-color: #7355C6;
+}

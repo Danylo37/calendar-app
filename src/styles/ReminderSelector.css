@@ -1,3 +1,5 @@
+@import './ModalCommon.css';
+
 .reminder-dropdown-container {
     position: relative;
     flex: 1;
@@ -25,7 +27,6 @@
 }
 
 .reminder-options {
-    max-height: 250px;
     overflow-y: auto;
 }
 
@@ -86,43 +87,6 @@
     overflow: hidden;
     transform: translateY(0);
     animation: slideUp 0.3s ease-out;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #F3EFFF;
-    border-bottom: 1px solid #eee;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: #6540CE;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.close-modal-btn {
-    background: transparent;
-    border: none;
-    color: #6540CE;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.close-modal-btn:hover {
-    background-color: rgba(132, 102, 215, 0.1);
-}
-
-.modal-content {
-    padding: 20px;
 }
 
 .time-input-group {
@@ -190,22 +154,6 @@
     font-weight: 500;
 }
 
-.reminder-message {
-    margin-top: 15px;
-    font-size: 0.9rem;
-    color: #666;
-    text-align: center;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 15px 20px;
-    border-top: 1px solid #eee;
-    background-color: #fafafa;
-}
-
 .cancel-modal-btn,
 .save-modal-btn {
     padding: 8px 16px;
@@ -237,21 +185,4 @@
 .save-modal-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }

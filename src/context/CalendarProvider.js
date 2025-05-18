@@ -3,6 +3,7 @@ import { useCalendarState } from './useCalendarState';
 import { useUIState } from './useUIState';
 import { useCategories } from './useCategories';
 import { useEvents, checkEventCrossesMidnight } from './useEvents';
+import { useReminders } from '../hooks/useReminders';
 
 const CalendarContext = createContext(null);
 
@@ -11,6 +12,8 @@ export const CalendarProvider = ({ children }) => {
     const uiState = useUIState();
     const categoryState = useCategories();
     const eventState = useEvents();
+
+    const reminderState = useReminders(eventState.events);
 
     const handleRemoveCategory = (categoryId) => {
         eventState.updateEventsAfterCategoryDelete(categoryId);
@@ -22,6 +25,7 @@ export const CalendarProvider = ({ children }) => {
         ...uiState,
         ...categoryState,
         ...eventState,
+        ...reminderState,
         removeCategory: handleRemoveCategory,
         checkEventCrossesMidnight
     };

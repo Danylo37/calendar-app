@@ -116,7 +116,6 @@
     font-size: 0.9rem;
     background-color: white;
     color: #5A5A5A;
-    text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -569,9 +568,9 @@
 .selected-category,
 .selected-reminder {
     display: flex;
-    align-items: center;
+    justify-content: center;
     gap: 6px;
-    width: 100%;
+    width: 120%;
 }
 
 .clear-selection-btn:focus {

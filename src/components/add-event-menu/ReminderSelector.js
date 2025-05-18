@@ -4,7 +4,7 @@ import { useClickOutside } from '../../hooks/useClickOutside';
 import '../../styles/ReminderSelector.css';
 
 const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
-    const defaultValue = initialValue && typeof initialValue.value === 'number' ? initialValue.value : 1;
+    const defaultValue = initialValue && typeof initialValue.value === 'number' ? initialValue.value : 15;
     const [timeValue, setTimeValue] = useState(defaultValue);
     const [timeUnit, setTimeUnit] = useState(initialValue?.unit || 'minutes');
     const modalRef = useRef(null);
@@ -14,25 +14,43 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
     if (!isOpen) return null;
 
     const handleSave = () => {
-        let finalValue = Number(timeValue);
+        let finalValue = Number(timeValue || 0);
         let finalUnit = timeUnit;
         let displayShort;
 
-        if (timeUnit === 'minutes' && finalValue >= 60) {
+        if (finalValue === 0) {
+            displayShort = 'When event starts';
+        }
+        else if (timeUnit === 'minutes' && finalValue >= 60 && finalValue % 60 === 0) {
+            const hours = finalValue / 60;
+
+            if (hours === 24) {
+                displayShort = '24 hrs.';
+            } else if (hours === 1) {
+                displayShort = '1 hr.';
+            } else {
+                displayShort = `${hours} hrs.`;
+            }
+
+            finalValue = hours;
+            finalUnit = 'hour';
+        }
+        else if (timeUnit === 'minutes' && finalValue >= 60) {
             const hours = Math.floor(finalValue / 60);
             const minutes = finalValue % 60;
 
-            if (minutes === 0) {
-                finalValue = hours;
-                finalUnit = 'hour';
-                displayShort = `${hours} ${hours === 1 ? 'hr.' : 'hrs.'}`;
+            displayShort = `${hours} ${hours === 1 ? 'hr.' : 'hrs.'} ${minutes}min.`;
+        }
+        else if (timeUnit === 'hour') {
+            if (finalValue === 24) {
+                displayShort = '24 hrs.';
+            } else if (finalValue === 1) {
+                displayShort = '1 hr.';
             } else {
-                finalUnit = 'minutes';
-                displayShort = `${hours} ${hours === 1 ? 'hr.' : 'hrs.'} ${minutes}min.`;
+                displayShort = `${finalValue} hrs.`;
             }
-        } else if (timeUnit === 'hour') {
-            displayShort = `${finalValue} ${finalValue === 1 ? 'hr.' : 'hrs.'}`;
-        } else {
+        }
+        else {
             displayShort = `${finalValue} min.`;
         }
 
@@ -47,9 +65,20 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
     };
 
     const handleTimeChange = (e) => {
-        const value = parseInt(e.target.value, 10);
-        if (!isNaN(value) && value > 0 && value <= 999) {
-            setTimeValue(value);
+        const inputValue = e.target.value;
+        const parsedValue = parseInt(inputValue, 10);
+        const maxValue = timeUnit === 'hour' ? 24 : 1440;
+
+        if (!isNaN(parsedValue)) {
+            if (parsedValue < 0) {
+                setTimeValue(0);
+            } else if (parsedValue > maxValue) {
+                setTimeValue(maxValue);
+            } else {
+                setTimeValue(parsedValue);
+            }
+        } else if (inputValue === '') {
+            setTimeValue('');
         }
     };
 
@@ -67,8 +96,8 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
                     <div className="time-input-group">
                         <input
                             type="number"
-                            min="1"
-                            max="999"
+                            min="0"
+                            max={timeUnit === 'hour' ? 24 : 1440}
                             value={timeValue}
                             onChange={handleTimeChange}
                             className="time-value-input"
@@ -108,7 +137,7 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
                     <button
                         className="save-modal-btn"
                         onClick={handleSave}
-                        disabled={!timeValue || timeValue <= 0}
+                        disabled={timeValue === ''}
                     >
                         Save
                     </button>
@@ -119,6 +148,7 @@ const CustomReminderModal = ({ isOpen, onClose, onSave, initialValue }) => {
 };
 
 const reminderOptions = [
+    { id: 0, value: 0, unit: 'minutes', displayShort: 'When event starts' },
     { id: 1, value: 5, unit: 'minutes', displayShort: '5 min.' },
     { id: 2, value: 10, unit: 'minutes', displayShort: '10 min.' },
     { id: 3, value: 15, unit: 'minutes', displayShort: '15 min.' },
@@ -201,7 +231,7 @@ const ReminderSelector = ({ selectedReminder, onChange, isDropdownOpen, onDropdo
                                             <span>{option.displayShort}</span>
                                         </>
                                     ) : (
-                                        <span>{option.value} {option.unit} before</span>
+                                        <span>{option.displayShort} {option.id !== 0 ? 'before' : ''}</span>
                                     )}
                                 </div>
                             ))}
