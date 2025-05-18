@@ -80,6 +80,7 @@ export const useEvents = () => {
                 isContinuation: true,
                 continuationId: `${event.id}-continuation`,
                 originalEventId: event.id,
+                originalDate: event.date,
                 date: dateString,
             };
         });

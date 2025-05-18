@@ -150,7 +150,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const handleCloseForm = useCallback(() => {
         closeAllPickers();
         onClose();
-    }, [closeAllPickers, onClose]);
+        resetForm();
+    }, [closeAllPickers, onClose, resetForm]);
 
     const handleFormClick = useCallback((e) => {
         if (

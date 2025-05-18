@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Edit, Clock, Calendar, Bell } from 'lucide-react';
 import '../../styles/EventViewMode.css';
 
@@ -17,6 +17,10 @@ const EventViewMode = ({
                            onDeleteEvent
                        }) => {
     const formatDate = (date) => {
+        if (category && category.originalDate) {
+            const originalDateObj = parseISO(category.originalDate);
+            return format(originalDateObj, 'EEEE, MMMM d, yyyy');
+        }
         return format(date, 'EEEE, MMMM d, yyyy');
     };
 

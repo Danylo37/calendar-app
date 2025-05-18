@@ -44,6 +44,7 @@ const CalendarEvent = ({ event, style, onClick }) => {
             ? {
                 ...event,
                 id: event.originalEventId || event.id,
+                date: event.originalDate || event.date,
             }
             : event;
 
