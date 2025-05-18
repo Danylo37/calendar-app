@@ -14,7 +14,7 @@
     cursor: pointer;
     box-sizing: border-box;
     border: 1px solid;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease;
     user-select: none;
     display: flex;
     flex-direction: column;
@@ -23,8 +23,6 @@
 
 .calendar-event:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transform: translateY(-1px);
-    z-index: 100 !important;
 }
 
 .event-title {
@@ -46,7 +44,7 @@
     line-height: 1.1;
 }
 
-.event-category {
+.event-description {
     margin-top: 1px;
     opacity: 0.8;
     white-space: nowrap;
@@ -54,6 +52,8 @@
     text-overflow: ellipsis;
     width: 100%;
     line-height: 1.1;
+    font-style: italic;
+    color: #555;
 }
 
 .event-compact {

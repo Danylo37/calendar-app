@@ -3,8 +3,13 @@ import { useCalendar } from '../../context/CalendarProvider';
 
 const CalendarEvent = ({ event, style, onClick }) => {
     const { title, color } = event;
-    const [, setIsHovering] = useState(false);
-    const { toggleEventForm } = useCalendar();
+    const [, setIsClicked] = useState(false);
+    const { toggleEventForm, editingEvent } = useCalendar();
+
+    const isBeingEdited = editingEvent && (
+        editingEvent.id === event.id ||
+        (event.originalEventId && editingEvent.id === event.originalEventId)
+    );
 
     const { isSmall, fontSize, isContinuation, ...visibleStyle } = style;
 
@@ -15,19 +20,17 @@ const CalendarEvent = ({ event, style, onClick }) => {
         position: 'absolute',
         overflow: 'hidden',
         fontSize: fontSize,
-        padding: isSmall ? '0 6px' : '4px 8px'
-    };
-
-    const handleMouseEnter = () => {
-        setIsHovering(true);
+        padding: isSmall ? '0 6px' : '4px 8px',
+        zIndex: isBeingEdited ? 100 : style.zIndex
     };
 
     const handleMouseLeave = () => {
-        setIsHovering(false);
+        setIsClicked(false);
     };
 
     const handleEventClick = (e) => {
         e.stopPropagation();
+        setIsClicked(true);
 
         const rect = e.currentTarget.getBoundingClientRect();
         const eventPosition = {
@@ -51,6 +54,22 @@ const CalendarEvent = ({ event, style, onClick }) => {
         }
     };
 
+    const calculateDurationInMinutes = () => {
+        const [startHours, startMinutes] = event.startTime.split(':').map(Number);
+        const [endHours, endMinutes] = event.endTime.split(':').map(Number);
+
+        let startTotalMinutes = startHours * 60 + startMinutes;
+        let endTotalMinutes = endHours * 60 + endMinutes;
+
+        if (endTotalMinutes <= startTotalMinutes) {
+            endTotalMinutes += 24 * 60;
+        }
+
+        return endTotalMinutes - startTotalMinutes;
+    };
+
+    const eventDuration = calculateDurationInMinutes();
+    const shouldShowDescription = !isSmall && parseInt(style.width) >= 60 && eventDuration >= 50 && event.description;
     const useCompactLayout = isSmall || parseInt(style.width) < 60;
 
     const timeFormat = `${event.startTime} - ${event.endTime}`;
@@ -60,7 +79,6 @@ const CalendarEvent = ({ event, style, onClick }) => {
             className="calendar-event"
             style={eventStyle}
             onClick={handleEventClick}
-            onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             {useCompactLayout ? (
@@ -72,9 +90,9 @@ const CalendarEvent = ({ event, style, onClick }) => {
                 <>
                     <div className="event-title">{title}</div>
                     <div className="event-time">{timeFormat}</div>
-                    {event.category && event.category.name && (
-                        <div className="event-category">
-                            {event.category.name}
+                    {shouldShowDescription && (
+                        <div className="event-description">
+                            {event.description}
                         </div>
                     )}
                 </>
