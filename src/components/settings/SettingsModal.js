@@ -62,7 +62,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
                             ) : (
                                 <div className="confirm-clear-container">
                                     <div className="confirm-message">
-                                        <AlertCircle size={20} />
+                                        <AlertCircle size={40} />
                                         <span>This will reset all categories to default. Events will keep their data but some categories may be removed. Are you sure?</span>
                                     </div>
                                     <div className="confirm-actions">
