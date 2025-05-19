@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Settings, X, Trash2, AlertCircle } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
 import { clearCalendarData } from '../../utils/localStorage';
@@ -8,14 +8,28 @@ import '../../styles/settings/SettingsModal.css';
 const SettingsModal = ({ isOpen, onClose }) => {
     const modalRef = useRef(null);
     const [showConfirmClear, setShowConfirmClear] = useState(false);
+    const [showConfirmReset, setShowConfirmReset] = useState(false);
 
     const { resetToDefaultCategories } = useCalendar();
 
     useClickOutside(modalRef, onClose, isOpen);
 
+    useEffect(() => {
+        if (!isOpen) {
+            setShowConfirmClear(false);
+            setShowConfirmReset(false);
+        }
+    }, [isOpen]);
+
     const handleClearData = () => {
         clearCalendarData();
         window.location.reload();
+    };
+
+    const handleResetCategories = () => {
+        resetToDefaultCategories();
+        setShowConfirmReset(false);
+        onClose();
     };
 
     if (!isOpen) return null;
@@ -38,12 +52,29 @@ const SettingsModal = ({ isOpen, onClose }) => {
                         <h4>Data Management</h4>
 
                         <div className="setting-item">
-                            <button
-                                className="reset-categories-btn"
-                                onClick={resetToDefaultCategories}
-                            >
-                                Reset Categories to Default
-                            </button>
+                            {!showConfirmReset ? (
+                                <button
+                                    className="reset-categories-btn"
+                                    onClick={() => setShowConfirmReset(true)}
+                                >
+                                    Reset Categories to Default
+                                </button>
+                            ) : (
+                                <div className="confirm-clear-container">
+                                    <div className="confirm-message">
+                                        <AlertCircle size={20} />
+                                        <span>This will reset all categories to default. Events will keep their data but some categories may be removed. Are you sure?</span>
+                                    </div>
+                                    <div className="confirm-actions">
+                                        <button className="cancel-btn" onClick={() => setShowConfirmReset(false)}>
+                                            Cancel
+                                        </button>
+                                        <button className="confirm-btn" onClick={handleResetCategories}>
+                                            Yes, Reset Categories
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="setting-item">

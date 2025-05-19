@@ -21,6 +21,12 @@ export const CalendarProvider = ({ children }) => {
         categoryState.removeCategory(categoryId);
     };
 
+    const resetToDefaultCategories = () => {
+        const defaultCategoryIds = [1, 2, 3];
+        eventState.updateEventsAfterCategoriesReset(defaultCategoryIds);
+        categoryState.resetToDefaultCategories();
+    };
+
     const clearAllData = () => {
         clearCalendarData();
         window.location.reload();
@@ -33,6 +39,7 @@ export const CalendarProvider = ({ children }) => {
         ...eventState,
         ...reminderState,
         removeCategory: handleRemoveCategory,
+        resetToDefaultCategories: resetToDefaultCategories,
         checkEventCrossesMidnight,
         clearAllData
     };

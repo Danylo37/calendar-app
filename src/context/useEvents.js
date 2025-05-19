@@ -121,6 +121,17 @@ export const useEvents = () => {
         );
     };
 
+    const updateEventsAfterCategoriesReset = (defaultCategoryIds) => {
+        setEvents(prevEvents =>
+            prevEvents.map(event => {
+                if (event.category && !defaultCategoryIds.includes(event.category.id)) {
+                    return { ...event, category: null };
+                }
+                return event;
+            })
+        );
+    };
+
     const clearAllEvents = () => {
         setEvents([]);
     };
@@ -133,6 +144,7 @@ export const useEvents = () => {
         getEventsForDay,
         removeEvent,
         updateEventsAfterCategoryDelete,
+        updateEventsAfterCategoriesReset,
         checkEventCrossesMidnight,
         clearAllEvents
     };
