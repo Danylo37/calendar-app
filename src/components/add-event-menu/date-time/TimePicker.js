@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Clock } from 'lucide-react';
 import '../../../styles/TimePicker.css';
 
@@ -16,38 +16,82 @@ const generateTimeSlots = () => {
 
 const timeSlots = generateTimeSlots();
 
+const timeToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+};
+
+const findClosestTime = (targetTime, availableTimeSlots) => {
+    if (!targetTime) return null;
+
+    if (availableTimeSlots.includes(targetTime)) {
+        return targetTime;
+    }
+
+    const targetMinutes = timeToMinutes(targetTime);
+
+    let closestTime = availableTimeSlots[0];
+    let minDifference = Math.abs(timeToMinutes(closestTime) - targetMinutes);
+
+    for (const time of availableTimeSlots) {
+        const difference = Math.abs(timeToMinutes(time) - targetMinutes);
+        if (difference < minDifference) {
+            closestTime = time;
+            minDifference = difference;
+        }
+    }
+
+    return closestTime;
+};
+
 const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTime, isEndTime, pickerRef }) => {
     const timeSlotsContainerRef = useRef(null);
     const selectedTimeRef = useRef(null);
+    const closestTimeRef = useRef(null);
     const localContainerRef = useRef(null);
-    const isMountedRef = useRef(true);
+    const [isContentReady, setIsContentReady] = useState(false);
 
     const containerRef = pickerRef || localContainerRef;
 
-    useEffect(() => {
-        return () => {
-            isMountedRef.current = false;
-        };
-    }, []);
+    const closestTime = findClosestTime(selectedTime, timeSlots);
 
     useEffect(() => {
         if (isOpen && timeSlotsContainerRef.current) {
-            setTimeout(() => {
-                if (isMountedRef.current &&
-                    timeSlotsContainerRef.current &&
-                    selectedTimeRef.current) {
-                    try {
-                        selectedTimeRef.current.scrollIntoView({
-                            behavior: 'auto',
-                            block: 'center'
-                        });
-                    } catch (error) {
-                        console.log('Error while scrolling in TimePicker:', error);
-                    }
+            setIsContentReady(false);
+
+            const index = timeSlots.indexOf(closestTime || selectedTime);
+            if (index !== -1) {
+                const itemHeight = 36;
+                const estimatedPosition = index * itemHeight;
+
+                if (timeSlotsContainerRef.current) {
+                    timeSlotsContainerRef.current.scrollTop = estimatedPosition;
                 }
-            }, 100);
+            }
+
+            setTimeout(() => {
+                setIsContentReady(true);
+
+                setTimeout(() => {
+                    try {
+                        if (selectedTime && timeSlots.includes(selectedTime) && selectedTimeRef.current) {
+                            selectedTimeRef.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        } else if (closestTime && closestTimeRef.current) {
+                            closestTimeRef.current.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    } catch (error) {
+                        console.log('Error scrolling to time:', error);
+                    }
+                }, 50);
+            }, 10);
         }
-    }, [isOpen, selectedTime]);
+    }, [isOpen, selectedTime, closestTime]);
 
     if (!isOpen) return null;
 
@@ -66,6 +110,11 @@ const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTim
             (timeHours === comparisonHours && timeMinutes <= comparisonMinutes);
     };
 
+    const timeSlotContainerStyle = {
+        opacity: isContentReady ? 1 : 0,
+        transition: 'opacity 0.15s ease-in-out'
+    };
+
     return (
         <div className="timepicker-container" ref={containerRef}>
             <div className="timepicker-header">
@@ -76,15 +125,21 @@ const TimePicker = ({ selectedTime, onTimeChange, isOpen, onClose, comparisonTim
             </div>
 
             <div className="timepicker-content">
-                <div className="time-slots-container" ref={timeSlotsContainerRef}>
+                <div
+                    className="time-slots-container"
+                    ref={timeSlotsContainerRef}
+                    style={timeSlotContainerStyle}
+                >
                     {timeSlots.map(time => {
                         const isSelected = selectedTime === time;
+                        const isClosest = closestTime === time && !isSelected;
+
                         return (
                             <div
                                 key={time}
                                 className={`time-slot ${isSelected ? 'time-slot-selected' : ''}`}
                                 onClick={() => handleTimeSelection(time)}
-                                ref={isSelected ? selectedTimeRef : null}
+                                ref={isSelected ? selectedTimeRef : (isClosest ? closestTimeRef : null)}
                             >
                                 {time}
                                 {isTimeEarlierOrEqual(time, comparisonTime) && (
