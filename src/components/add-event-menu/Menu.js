@@ -95,7 +95,8 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         removeEvent,
         editingEvent,
         selectedTimeSlotForForm,
-        checkEventCrossesMidnight
+        checkEventCrossesMidnight,
+        resetReminderForEvent
     } = useCalendar();
 
     useEffect(() => {
@@ -501,8 +502,9 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                 id: eventId
             });
 
-            setLocalUpdated(true);
+            resetReminderForEvent(eventId);
 
+            setLocalUpdated(true);
             setIsViewMode(true);
         } else {
             addEvent(eventData);

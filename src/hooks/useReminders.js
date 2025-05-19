@@ -62,6 +62,14 @@ export const useReminders = (events) => {
         }
     }, [activeReminder]);
 
+    const resetDismissedReminder = useCallback((eventId) => {
+        setDismissedReminders(prev => {
+            const newDismissed = {...prev};
+            delete newDismissed[eventId];
+            return newDismissed;
+        });
+    }, []);
+
     useEffect(() => {
         const checkReminders = () => {
             if (activeReminder) return;
@@ -85,6 +93,7 @@ export const useReminders = (events) => {
 
     return {
         activeReminder,
-        closeReminder
+        closeReminder,
+        resetDismissedReminder
     };
 };

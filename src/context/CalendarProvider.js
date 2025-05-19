@@ -13,7 +13,6 @@ export const CalendarProvider = ({ children }) => {
     const uiState = useUIState();
     const categoryState = useCategories();
     const eventState = useEvents();
-
     const reminderState = useReminders(eventState.events);
 
     const handleRemoveCategory = (categoryId) => {
@@ -25,6 +24,10 @@ export const CalendarProvider = ({ children }) => {
         const defaultCategoryIds = [1, 2, 3];
         eventState.updateEventsAfterCategoriesReset(defaultCategoryIds);
         categoryState.resetToDefaultCategories();
+    };
+
+    const resetReminderForEvent = (eventId) => {
+        reminderState.resetDismissedReminder(eventId);
     };
 
     const clearAllData = () => {
@@ -40,6 +43,7 @@ export const CalendarProvider = ({ children }) => {
         ...reminderState,
         removeCategory: handleRemoveCategory,
         resetToDefaultCategories: resetToDefaultCategories,
+        resetReminderForEvent,
         checkEventCrossesMidnight,
         clearAllData
     };
