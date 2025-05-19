@@ -59,7 +59,7 @@ function MonthView({ currentDate, onSelectTimeSlot, isEventFormOpen }) {
                         className="event"
                         style={{
                             backgroundColor: event.color.background,
-                            borderLeft: `3px solid ${event.color.border}`
+                            border: `1px solid ${event.color.border}`
                         }}
                     >
                         {event.title}
