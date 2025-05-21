@@ -105,8 +105,6 @@ const EventEditMode = ({
                 dateInputRef={dateInputRef}
                 startTimeInputRef={startTimeInputRef}
                 endTimeInputRef={endTimeInputRef}
-                setStartTimeValue={setStartTimeValue => handleTimeInputChange({ target: { value: setStartTimeValue }}, () => {})}
-                setEndTimeValue={setEndTimeValue => handleTimeInputChange({ target: { value: setEndTimeValue }}, () => {})}
                 datePickerRef={datePickerRef}
                 startTimePickerRef={startTimePickerRef}
                 endTimePickerRef={endTimePickerRef}

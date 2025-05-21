@@ -250,7 +250,13 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
 
     const handleTimeInputChange = (e, setTimeValue) => {
         const value = e.target.value;
-        setTimeValue(value);
+
+        if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value) || value === '' || /^([0-1]?[0-9]|2[0-3]):([0-5]?[0-9])?$/.test(value)) {
+            setTimeValue(value);
+        }
+        else if (/^([0-1]?[0-9]|2[0-3])$/.test(value)) {
+            setTimeValue(`${value}:00`);
+        }
     };
 
     const handleStartTimeChange = (time) => {

@@ -22,8 +22,6 @@ const DateTimeSelector = ({
                               dateInputRef,
                               startTimeInputRef,
                               endTimeInputRef,
-                              setStartTimeValue,
-                              setEndTimeValue,
                               datePickerRef,
                               startTimePickerRef,
                               endTimePickerRef
@@ -62,7 +60,7 @@ const DateTimeSelector = ({
                         className="event-form-input time-input"
                         placeholder="HH:MM"
                         value={startTimeValue}
-                        onChange={(e) => handleTimeInputChange(e, setStartTimeValue)}
+                        onChange={(e) => handleTimeInputChange(e, (value) => handleStartTimeChange(value))}
                         onClick={() => setIsStartTimePickerOpen(!isStartTimePickerOpen)}
                         ref={startTimeInputRef}
                     />
@@ -90,7 +88,7 @@ const DateTimeSelector = ({
                         className="event-form-input time-input"
                         placeholder="HH:MM"
                         value={endTimeValue}
-                        onChange={(e) => handleTimeInputChange(e, setEndTimeValue)}
+                        onChange={(e) => handleTimeInputChange(e, (value) => handleEndTimeChange(value))}
                         onClick={() => setIsEndTimePickerOpen(!isEndTimePickerOpen)}
                         ref={endTimeInputRef}
                     />
