@@ -4,43 +4,19 @@ import { List } from 'lucide-react';
 import { useCalendar } from '../../context/CalendarProvider';
 import { format } from 'date-fns';
 import MenuHeader from './MenuHeader';
-import DateTimeSelector from './date-time/DateTimeSelector';
-import CategorySelector from './CategorySelector';
-import ColorSelector, { colorOptions } from './ColorSelector';
-import EventDescription from './EventDescription';
-import MenuFooter from './MenuFooter';
-import ReminderSelector from './ReminderSelector';
-import { availableIcons } from '../../constants/icons';
 import EventViewMode from './EventViewMode';
-
-const getCurrentTimeRoundedToNextHour = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    const nextHour = minutes === 0 ? hours : hours + 1;
-
-    const startHour = nextHour % 24;
-    const endHour = (startHour + 1) % 24;
-
-    const formattedStartHour = startHour.toString().padStart(2, '0');
-    const formattedEndHour = endHour.toString().padStart(2, '0');
-
-    const startTime = `${formattedStartHour}:00`;
-    const endTime = `${formattedEndHour}:00`;
-
-    return { startTime, endTime };
-};
+import EventEditMode from './EventEditMode';
+import { colorOptions } from './ColorSelector';
+import { availableIcons } from '../../constants/icons';
+import { getCurrentTimeRoundedToNextHour } from '../../utils/timeUtils';
+import { validateEventForm } from '../../utils/eventFormUtils';
+import useDraggableForm from '../../hooks/useDraggableForm';
+import useDropdownManagement from '../../hooks/useDropdownManagement';
 
 const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const formRef = useRef(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-    const [position, setPosition] = useState({ x: 0, y: 0 });
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [dateInputValue, setDateInputValue] = useState(format(new Date(), 'dd/MM/yyyy'));
-    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-    const [isPositionCalculated, setIsPositionCalculated] = useState(false);
     const [isViewMode, setIsViewMode] = useState(false);
 
     const [localUpdated, setLocalUpdated] = useState(false);
@@ -50,19 +26,10 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     const [startTimeValue, setStartTimeValue] = useState(startTime);
     const [endTimeValue, setEndTimeValue] = useState(endTime);
 
-    const [isStartTimePickerOpen, setIsStartTimePickerOpen] = useState(false);
-    const [isEndTimePickerOpen, setIsEndTimePickerOpen] = useState(false);
-
-    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('List');
-
-    const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
     const [selectedColor, setSelectedColor] = useState(colorOptions[6]);
-
-    const [isReminderDropdownOpen, setIsReminderDropdownOpen] = useState(false);
     const [selectedReminder, setSelectedReminder] = useState(null);
     const [description, setDescription] = useState('');
     const [title, setTitle] = useState('');
@@ -73,8 +40,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     });
     const [showValidationErrors, setShowValidationErrors] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-
-    const [formDimensions, setFormDimensions] = useState({ width: 400, height: 500 });
 
     const categoryDropdownRef = useRef(null);
     const colorDropdownRef = useRef(null);
@@ -99,28 +64,49 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         resetReminderForEvent
     } = useCalendar();
 
+    const {
+        isDatePickerOpen,
+        isStartTimePickerOpen,
+        isEndTimePickerOpen,
+        isCategoryDropdownOpen,
+        isColorDropdownOpen,
+        isReminderDropdownOpen,
+        isAddingCategory,
+        setIsAddingCategory,
+        setIsCategoryDropdownOpen,
+        setIsColorDropdownOpen,
+        setIsReminderDropdownOpen,
+        toggleDatePicker,
+        toggleStartTimePicker,
+        toggleEndTimePicker,
+        toggleCategoryDropdown,
+        toggleColorDropdown,
+        toggleReminderDropdown,
+        closeAllPickers
+    } = useDropdownManagement();
+
+    const { position, isPositionCalculated, handleMouseDown } = useDraggableForm({
+        formRef,
+        triggerPosition,
+        isOpen,
+        closeAllUIElementsExcept,
+        closeAllPickers
+    });
+
+    useEffect(() => {
+        if (!isOpen) {
+            setNewCategoryName('');
+            setIsAddingCategory(false);
+            setSelectedIcon('List');
+        }
+    }, [isOpen, setIsAddingCategory]);
+
     useEffect(() => {
         if (localUpdated && isOpen) {
             setIsViewMode(true);
             setLocalUpdated(false);
         }
     }, [localUpdated, isOpen]);
-
-    useEffect(() => {
-        if (!isOpen) {
-            setIsPositionCalculated(false);
-        }
-    }, [isOpen]);
-
-    const closeAllPickers = useCallback(() => {
-        setIsDatePickerOpen(false);
-        setIsStartTimePickerOpen(false);
-        setIsEndTimePickerOpen(false);
-        setIsCategoryDropdownOpen(false);
-        setIsColorDropdownOpen(false);
-        setIsReminderDropdownOpen(false);
-        setIsAddingCategory(false);
-    }, []);
 
     const resetForm = useCallback(() => {
         setTitle('');
@@ -186,30 +172,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
     }, [isOpen, closeAllPickers]);
 
-    const calculatePosition = useCallback((triggerPos, formWidth, formHeight) => {
-        if (!triggerPos) return { x: 0, y: 0 };
-
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        let xPos = triggerPos.left;
-        let yPos = triggerPos.top + triggerPos.height + 10;
-
-        if (xPos + formWidth > viewportWidth - 20) {
-            xPos = Math.max(20, viewportWidth - formWidth - 20);
-        }
-
-        if (yPos + formHeight > viewportHeight - 20) {
-            yPos = Math.max(20, triggerPos.top - formHeight - 10);
-
-            if (yPos < 20) {
-                yPos = 20;
-            }
-        }
-
-        return { x: xPos, y: yPos };
-    }, []);
-
     useEffect(() => {
         if (editingEvent && isOpen) {
             setIsViewMode(true);
@@ -256,62 +218,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
             }
         }
     }, [editingEvent, isOpen, startTime, endTime, resetForm, selectedTimeSlotForForm]);
-
-    useEffect(() => {
-        if (isOpen && formRef.current && triggerPosition) {
-            const updateFormDimensions = () => {
-                if (formRef.current) {
-                    const { width, height } = formRef.current.getBoundingClientRect();
-                    setFormDimensions({ width, height });
-
-                    const pos = calculatePosition(triggerPosition, width, height);
-                    setPosition(pos);
-
-                    if (pos.y < triggerPosition.top) {
-                        formRef.current.style.transformOrigin = 'bottom left';
-                    } else {
-                        formRef.current.style.transformOrigin = 'top left';
-                    }
-
-                    setIsPositionCalculated(true);
-                }
-            };
-
-            requestAnimationFrame(updateFormDimensions);
-        }
-    }, [isOpen, triggerPosition, calculatePosition]);
-
-    useEffect(() => {
-        if (formRef.current && isOpen && triggerPosition) {
-            const pos = calculatePosition(triggerPosition, formDimensions.width, formDimensions.height);
-            setPosition(pos);
-        }
-    }, [formDimensions, triggerPosition, isOpen, calculatePosition]);
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const handleResize = () => {
-            if (formRef.current && triggerPosition) {
-                const { width, height } = formRef.current.getBoundingClientRect();
-                setFormDimensions({ width, height });
-                const pos = calculatePosition(triggerPosition, width, height);
-                setPosition(pos);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [isOpen, triggerPosition, calculatePosition]);
-
-    useEffect(() => {
-        if (formRef.current) {
-            formRef.current.style.left = `${position.x}px`;
-            formRef.current.style.top = `${position.y}px`;
-        }
-    }, [position]);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -363,68 +269,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         }
     };
 
-    const calculateDurationInMinutes = (startTime, endTime) => {
-        const [startHours, startMinutes] = startTime.split(':').map(Number);
-        const [endHours, endMinutes] = endTime.split(':').map(Number);
-
-        let startTotalMinutes = startHours * 60 + startMinutes;
-        let endTotalMinutes = endHours * 60 + endMinutes;
-
-        if (endTotalMinutes <= startTotalMinutes) {
-            endTotalMinutes += 24 * 60;
-        }
-
-        return endTotalMinutes - startTotalMinutes;
-    };
-
-    const validateTimeDuration = (start, end) => {
-        const duration = calculateDurationInMinutes(start, end);
-
-        if (duration === 1440) {
-            return true;
-        }
-
-        return duration >= 5;
-    };
-
-    const closeOtherDropdowns = (currentDropdown) => {
-        if (currentDropdown !== 'datePicker') setIsDatePickerOpen(false);
-        if (currentDropdown !== 'startTimePicker') setIsStartTimePickerOpen(false);
-        if (currentDropdown !== 'endTimePicker') setIsEndTimePickerOpen(false);
-        if (currentDropdown !== 'category') setIsCategoryDropdownOpen(false);
-        if (currentDropdown !== 'color') setIsColorDropdownOpen(false);
-        if (currentDropdown !== 'reminder') setIsReminderDropdownOpen(false);
-    };
-
-    const toggleCategoryDropdown = () => {
-        const newState = !isCategoryDropdownOpen;
-        setIsCategoryDropdownOpen(newState);
-
-        if (newState) {
-            closeOtherDropdowns('category');
-        }
-
-        if (!newState) {
-            setIsAddingCategory(false);
-        }
-    };
-
-    const toggleColorDropdown = () => {
-        const newState = !isColorDropdownOpen;
-        setIsColorDropdownOpen(newState);
-
-        if (newState) {
-            closeOtherDropdowns('color');
-        }
-    };
-
-    const toggleReminderDropdown = (newState) => {
-        setIsReminderDropdownOpen(newState);
-        if (newState) {
-            closeOtherDropdowns('reminder');
-        }
-    };
-
     const handleSelectCategory = (category) => {
         setSelectedCategory(category);
         setIsCategoryDropdownOpen(false);
@@ -462,13 +306,9 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
     };
 
     const validateForm = () => {
-        const newErrors = {
-            title: !title.trim(),
-            duration: !validateTimeDuration(startTimeValue, endTimeValue)
-        };
-
+        const { errors: newErrors, isValid } = validateEventForm(title, startTimeValue, endTimeValue);
         setErrors(newErrors);
-        return !Object.values(newErrors).some(error => error);
+        return isValid;
     };
 
     const handleSaveEvent = () => {
@@ -556,69 +396,6 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
         };
     }, [isOpen, handleCloseForm]);
 
-    const handleMouseDown = useCallback((e) => {
-        if (e.target.closest('.form-header')) {
-            setIsDragging(true);
-            const rect = formRef.current.getBoundingClientRect();
-            setDragOffset({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            });
-            e.preventDefault();
-            e.stopPropagation();
-            closeAllUIElementsExcept('eventForm');
-            closeAllPickers();
-        }
-    }, [closeAllUIElementsExcept, closeAllPickers]);
-
-    const handleMouseMove = useCallback((e) => {
-        if (isDragging && formRef.current) {
-            const newX = e.clientX - dragOffset.x;
-            const newY = e.clientY - dragOffset.y;
-            setPosition({ x: newX, y: newY });
-        }
-    }, [isDragging, dragOffset]);
-
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
-    }, []);
-
-    useEffect(() => {
-        if (isDragging) {
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
-        } else {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        }
-
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [isDragging, handleMouseMove, handleMouseUp]);
-
-    const toggleDatePicker = () => {
-        setIsDatePickerOpen(!isDatePickerOpen);
-        if (!isDatePickerOpen) {
-            closeOtherDropdowns('datePicker');
-        }
-    };
-
-    const toggleStartTimePicker = () => {
-        setIsStartTimePickerOpen(!isStartTimePickerOpen);
-        if (!isStartTimePickerOpen) {
-            closeOtherDropdowns('startTimePicker');
-        }
-    };
-
-    const toggleEndTimePicker = () => {
-        setIsEndTimePickerOpen(!isEndTimePickerOpen);
-        if (!isEndTimePickerOpen) {
-            closeOtherDropdowns('endTimePicker');
-        }
-    };
-
     if (!isOpen) return null;
 
     return (
@@ -651,98 +428,71 @@ const Menu = ({ isOpen, onClose, triggerPosition }) => {
                     onDeleteEvent={handleDeleteEvent}
                 />
             ) : (
-                <>
-                    <div className="form-group">
-                        <input
-                            type="text"
-                            className={`event-form-title ${errors.title && showValidationErrors ? 'input-error' : ''}`}
-                            placeholder="Add title *"
-                            value={title}
-                            onChange={handleTitleChange}
-                        />
-                        {errors.title && showValidationErrors && (
-                            <div className="error-message">Title is required</div>
-                        )}
-                    </div>
+                <EventEditMode
+                    title={title}
+                    dateInputValue={dateInputValue}
+                    startTimeValue={startTimeValue}
+                    endTimeValue={endTimeValue}
+                    selectedDate={selectedDate}
+                    selectedCategory={selectedCategory}
+                    selectedColor={selectedColor}
+                    selectedReminder={selectedReminder}
+                    description={description}
+                    newCategoryName={newCategoryName}
+                    selectedIcon={selectedIcon}
 
-                    <DateTimeSelector
-                        dateInputValue={dateInputValue}
-                        handleDateInputChange={handleDateInputChange}
-                        startTimeValue={startTimeValue}
-                        endTimeValue={endTimeValue}
-                        handleTimeInputChange={handleTimeInputChange}
-                        handleStartTimeChange={handleStartTimeChange}
-                        handleEndTimeChange={handleEndTimeChange}
-                        isDatePickerOpen={isDatePickerOpen}
-                        setIsDatePickerOpen={toggleDatePicker}
-                        isStartTimePickerOpen={isStartTimePickerOpen}
-                        setIsStartTimePickerOpen={toggleStartTimePicker}
-                        isEndTimePickerOpen={isEndTimePickerOpen}
-                        setIsEndTimePickerOpen={toggleEndTimePicker}
-                        selectedDate={selectedDate}
-                        handleDateChange={handleDateChange}
-                        dateInputRef={dateInputRef}
-                        startTimeInputRef={startTimeInputRef}
-                        endTimeInputRef={endTimeInputRef}
-                        setStartTimeValue={setStartTimeValue}
-                        setEndTimeValue={setEndTimeValue}
-                        datePickerRef={datePickerRef}
-                        startTimePickerRef={startTimePickerRef}
-                        endTimePickerRef={endTimePickerRef}
-                    />
+                    errors={errors}
+                    showValidationErrors={showValidationErrors}
 
-                    {errors.duration && showValidationErrors && (
-                        <div className="duration-error-message">Event must be at least 5 minutes long (or exactly 24 hours)</div>
-                    )}
+                    isEditMode={isEditMode}
 
-                    <div className="event-form-row">
-                        <CategorySelector
-                            selectedCategory={selectedCategory}
-                            isCategoryDropdownOpen={isCategoryDropdownOpen}
-                            toggleCategoryDropdown={toggleCategoryDropdown}
-                            categories={categories}
-                            handleSelectCategory={handleSelectCategory}
-                            isAddingCategory={isAddingCategory}
-                            setIsAddingCategory={setIsAddingCategory}
-                            newCategoryName={newCategoryName}
-                            setNewCategoryName={setNewCategoryName}
-                            selectedIcon={selectedIcon}
-                            setSelectedIcon={setSelectedIcon}
-                            handleAddCategory={handleAddCategory}
-                            categoryDropdownRef={categoryDropdownRef}
-                            getIconComponent={getIconComponent}
-                            handleClearCategory={handleClearCategory}
-                        />
+                    handleTitleChange={handleTitleChange}
+                    handleDateInputChange={handleDateInputChange}
+                    handleTimeInputChange={handleTimeInputChange}
+                    handleStartTimeChange={handleStartTimeChange}
+                    handleEndTimeChange={handleEndTimeChange}
+                    handleDateChange={handleDateChange}
+                    handleSelectCategory={handleSelectCategory}
+                    handleClearCategory={handleClearCategory}
+                    handleSelectColor={handleSelectColor}
+                    handleSelectReminder={handleSelectReminder}
+                    handleClearReminder={handleClearReminder}
+                    handleAddCategory={handleAddCategory}
+                    handleSaveEvent={handleSaveEvent}
+                    handleDeleteEvent={handleDeleteEvent}
 
-                        <ColorSelector
-                            selectedColor={selectedColor}
-                            isColorDropdownOpen={isColorDropdownOpen}
-                            toggleColorDropdown={toggleColorDropdown}
-                            handleSelectColor={handleSelectColor}
-                            colorDropdownRef={colorDropdownRef}
-                        />
+                    isDatePickerOpen={isDatePickerOpen}
+                    isStartTimePickerOpen={isStartTimePickerOpen}
+                    isEndTimePickerOpen={isEndTimePickerOpen}
+                    isCategoryDropdownOpen={isCategoryDropdownOpen}
+                    isColorDropdownOpen={isColorDropdownOpen}
+                    isReminderDropdownOpen={isReminderDropdownOpen}
+                    isAddingCategory={isAddingCategory}
 
-                        <ReminderSelector
-                            selectedReminder={selectedReminder}
-                            onChange={handleSelectReminder}
-                            isDropdownOpen={isReminderDropdownOpen}
-                            onDropdownToggle={toggleReminderDropdown}
-                            handleClearReminder={handleClearReminder}
-                            dropdownRef={reminderDropdownRef}
-                        />
-                    </div>
+                    toggleDatePicker={toggleDatePicker}
+                    toggleStartTimePicker={toggleStartTimePicker}
+                    toggleEndTimePicker={toggleEndTimePicker}
+                    toggleCategoryDropdown={toggleCategoryDropdown}
+                    toggleColorDropdown={toggleColorDropdown}
+                    toggleReminderDropdown={toggleReminderDropdown}
+                    setIsAddingCategory={setIsAddingCategory}
 
-                    <EventDescription
-                        description={description}
-                        setDescription={setDescription}
-                    />
+                    dateInputRef={dateInputRef}
+                    startTimeInputRef={startTimeInputRef}
+                    endTimeInputRef={endTimeInputRef}
+                    datePickerRef={datePickerRef}
+                    startTimePickerRef={startTimePickerRef}
+                    endTimePickerRef={endTimePickerRef}
+                    categoryDropdownRef={categoryDropdownRef}
+                    colorDropdownRef={colorDropdownRef}
+                    reminderDropdownRef={reminderDropdownRef}
 
-                    <MenuFooter
-                        onAddEvent={handleSaveEvent}
-                        isEditMode={isEditMode}
-                        onDeleteEvent={handleDeleteEvent}
-                    />
-                </>
+                    getIconComponent={getIconComponent}
+                    categories={categories}
+                    setNewCategoryName={setNewCategoryName}
+                    setSelectedIcon={setSelectedIcon}
+                    setDescription={setDescription}
+                />
             )}
         </div>
     );
