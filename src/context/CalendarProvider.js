@@ -4,7 +4,6 @@ import { useUIState } from './useUIState';
 import { useCategories } from './useCategories';
 import { useEvents, checkEventCrossesMidnight } from './useEvents';
 import { useReminders } from '../hooks/useReminders';
-import { clearCalendarData } from '../utils/localStorage';
 
 const CalendarContext = createContext(null);
 
@@ -30,11 +29,6 @@ export const CalendarProvider = ({ children }) => {
         reminderState.resetDismissedReminder(eventId);
     };
 
-    const clearAllData = () => {
-        clearCalendarData();
-        window.location.reload();
-    };
-
     const value = {
         ...calendarState,
         ...uiState,
@@ -45,7 +39,6 @@ export const CalendarProvider = ({ children }) => {
         resetToDefaultCategories: resetToDefaultCategories,
         resetReminderForEvent,
         checkEventCrossesMidnight,
-        clearAllData
     };
 
     return (
