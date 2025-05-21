@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+# 📆 Calendar App
+A modern, interactive calendar application built with React that helps you organize your schedule with a clean and intuitive interface.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 🌟 Features
+- Multiple View Modes: Toggle between Day, Week, and Month views
+- Event Management: Create, edit, and delete events with ease
+- Category System: Organize events by customizable categories
+- Color Coding: Assign colors to events for visual differentiation
+- Reminders: Set custom reminders for your events
+- Drag & Drop: Move event forms around the screen for better visibility
+- Real-time Updates: Current time indicator shows your position in the day
+- Persistent Storage: All your data is saved in your browser's local storage
 
-## Available Scripts
+# 🛠️ Technology Stack
+- React 19: Latest version with powerful hooks and state management
+- date-fns: Comprehensive date manipulation library
+- Lucide Icons: Beautiful SVG icons for the interface
+- Local Storage API: For client-side data persistence
 
-In the project directory, you can run:
+# 📋 Project Structure
+```
+src/
+├── components/           # UI Components
+│   ├── add-event-menu/   # Event creation and editing forms
+│   ├── calendar/         # Calendar views and grid components
+│   ├── category/         # Category management 
+│   ├── layout/           # App layout (Header, Main, Footer)
+│   ├── reminder/         # Reminder notifications
+│   └── settings/         # Settings modal
+├── constants/            # App constants (icons, etc.)
+├── context/              # React Context for state management
+├── hooks/                # Custom React hooks
+├── styles/               # CSS styles organized by component
+└── utils/                # Utility functions
+```
 
-### `npm start`
+# ✨ Key Features Explained
+## Calendar Views
+Switch between Day, Week, and Month views to visualize your schedule at different levels of detail. The current day is highlighted for easy reference.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Event Management
+Click on any time slot to create a new event. Events include:
+- Title
+- Date and time range
+- Optional category assignment
+- Color selection
+- Description
+- Reminder settings
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Categories
+Create custom categories with icons to organize your events. You can filter events by category and manage them through the category dropdown menu.
 
-### `npm test`
+## Reminders
+Set reminders for events with flexible timing options. When a reminder is due, a popup will appear with the event details.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Persistent Data
+All your events, categories, and settings are automatically saved to your browser's local storage, so your data persists between sessions.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 👨‍💻 Author
+Danylo Lopatin
