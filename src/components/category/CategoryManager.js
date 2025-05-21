@@ -26,6 +26,14 @@ function CategoryManager() {
     const menuRef = useRef(null);
 
     useEffect(() => {
+        if (!isCategoryMenuOpen) {
+            setNewCategoryName('');
+            setIsAddingCategory(false);
+            setSelectedIcon('List');
+        }
+    }, [isCategoryMenuOpen]);
+
+    useEffect(() => {
         function handleClickOutside(event) {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 if (isCategoryMenuOpen) {

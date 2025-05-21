@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChevronDown, Plus, X } from 'lucide-react';
 import { availableIcons } from '../../constants/icons';
 
@@ -19,6 +19,15 @@ const CategorySelector = ({
                               getIconComponent,
                               handleClearCategory
                           }) => {
+
+    useEffect(() => {
+        if (!isCategoryDropdownOpen) {
+            setNewCategoryName('');
+            setIsAddingCategory(false);
+            setSelectedIcon('List');
+        }
+    }, [isCategoryDropdownOpen, setNewCategoryName, setIsAddingCategory, setSelectedIcon]);
+
     return (
         <div className="category-dropdown-container" ref={categoryDropdownRef}>
             <div
