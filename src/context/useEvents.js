@@ -101,7 +101,7 @@ export const useEvents = () => {
             }
 
             return !event.category || selectedCategoryIds.has(event.category.id);
-        });
+        }).sort((a, b) => a.startTime.localeCompare(b.startTime));
     };
 
     const removeEvent = (id) => {
