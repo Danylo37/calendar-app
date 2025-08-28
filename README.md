@@ -1,6 +1,9 @@
 # 📆 Calendar App
 A modern, interactive calendar application built with React that helps you organize your schedule with a clean and intuitive interface.
 
+## 🚀 Live Demo
+**Try the calendar now:** https://danylo37.github.io/calendar-app/
+
 # 🌟 Features
 - Multiple View Modes: Toggle between Day, Week, and Month views
 - Event Management: Create, edit, and delete events with ease

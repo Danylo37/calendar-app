@@ -1,4 +1,5 @@
 {
+  "homepage": "https://Danylo37.github.io/calendar-app",
   "name": "event-calendar-app",
   "version": "0.1.0",
   "private": true,
@@ -18,6 +19,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -44,6 +47,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.4",
+    "gh-pages": "^6.3.0",
     "prettier": "^3.5.3"
   }
 }
